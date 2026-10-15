@@ -11,12 +11,14 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 from pathlib import Path
-from decouple import Config, RepositoryEnv
+from decouple import Config, RepositoryEnv, RepositoryEmpty
 from urllib.parse import urlparse, unquote
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-config = Config(RepositoryEnv(BASE_DIR / '.env'))
+env_path = BASE_DIR / '.env'
+config = Config(RepositoryEnv(env_path)) if env_path.exists() else Config(RepositoryEmpty())
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
@@ -85,7 +87,7 @@ DATABASES = {
         'HOST': database_url.hostname,
         'PORT': database_url.port or 5432,
         'OPTIONS': {
-            'sslmode': 'require',
+            'sslmode': config('DB_SSLMODE', default='require'),
         },
     }
 }

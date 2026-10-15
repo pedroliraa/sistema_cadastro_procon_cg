@@ -42,11 +42,8 @@ jobs:
     env:
       SECRET_KEY: ci-only-not-a-real-secret
       DEBUG: "False"
-      DB_NAME: procon_cg
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_HOST: localhost
-      DB_PORT: "5432"
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/procon_cg
+      DB_SSLMODE: disable
 
     steps:
       - uses: actions/checkout@v4

@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+# Cancela execuções antigas da mesma branch quando chega um push novo
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend (Django)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: back
+
+    # Postgres descartável, só para a pipeline (não usa Supabase nem segredos)
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: procon_cg
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    # Mesmos nomes de variáveis do .env do README (python-decouple lê do ambiente
+    # quando não existe arquivo .env)
+    env:
+      SECRET_KEY: ci-only-not-a-real-secret
+      DEBUG: "False"
+      DB_NAME: procon_cg
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: localhost
+      DB_PORT: "5432"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: back/requirements.txt
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Checagem do projeto Django
+        run: python manage.py check
+
+      - name: Verificar migrations pendentes
+        run: python manage.py makemigrations --check --dry-run
+
+      # O runner cria e migra um banco de teste sozinho
+      - name: Rodar testes
+        run: python manage.py test
+
+  frontend:
+    name: Frontend (Angular)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: front
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: front/package-lock.json
+
+      # --legacy-peer-deps pelo mesmo motivo descrito no README
+      - name: Instalar dependências
+        run: npm ci --legacy-peer-deps
+
+      - name: Build
+        run: npx ng build
+
+      # Habilitar quando o frontend tiver testes. O comando depende do runner do
+      # projeto (Karma ou Vitest), então ajuste conforme o que o `ng new` gerou.
+      # - name: Testes
+      #   run: npm test -- --watch=false

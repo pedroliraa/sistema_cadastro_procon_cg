@@ -21,6 +21,10 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
     SpectacularRedocView,
 )
+   
+admin.site.site_header = "Cadastro Positivo — PROCON-CG"
+admin.site.index_title = "Painel administrativo"
+admin.site.site_title = "PROCON-CG"
 
 urlpatterns = [
     path('admin/', admin.site.urls),

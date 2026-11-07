@@ -1,5 +1,7 @@
+from django.core.validators import RegexValidator
 from django.db import models
 
+from .validators import validar_cnpj
 
 class AreaAtuacao(models.Model):
     nome = models.CharField(max_length=100, unique=True)
@@ -24,11 +26,19 @@ class Empresa(models.Model):
     ]
 
     razao_social = models.CharField(max_length=255)
-    cnpj = models.CharField(max_length=18, unique=True)
+    cnpj = models.CharField(  # ALTERADO
+        max_length=14,
+        unique=True,
+        validators=[validar_cnpj],
+        help_text='14 caracteres, sem pontuação.',
+    )
     endereco = models.CharField(max_length=255)
     bairro = models.CharField(max_length=100)
     cidade = models.CharField(max_length=100)
-    telefone = models.CharField(max_length=20)
+    telefone = models.CharField(  # ALTERADO
+        max_length=11,
+        validators=[RegexValidator(r'^\d{10,11}$', 'Telefone com 10 ou 11 dígitos, DDD incluso e sem pontuação.')],
+    )
     email = models.EmailField()
 
     areas = models.ManyToManyField(
@@ -49,6 +59,9 @@ class Empresa(models.Model):
         choices=STATUS_CHOICES,
         default='ativo'
     )
+
+    class Meta:  # NOVO
+        ordering = ['razao_social']
 
     def __str__(self):
         return self.razao_social

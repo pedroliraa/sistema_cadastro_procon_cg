@@ -6,6 +6,11 @@ from .validators import validar_cnpj
 class AreaAtuacao(models.Model):
     nome = models.CharField(max_length=100, unique=True)
 
+    class Meta:
+        verbose_name = "Área de atuação"
+        verbose_name_plural = "Áreas de atuação"
+        ordering = ["nome"]
+
     def __str__(self):
         return self.nome
 

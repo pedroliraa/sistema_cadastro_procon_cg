@@ -1,7 +1,11 @@
+import os
+import uuid
+
+from django.conf import settings
 from django.core.validators import RegexValidator
 from django.db import models
 
-from .validators import validar_cnpj
+from .validators import validar_cnpj, validar_documento
 
 class AreaAtuacao(models.Model):
     nome = models.CharField(max_length=100, unique=True)
@@ -92,6 +96,12 @@ class HistoricoSelo(models.Model):
         return f'{self.empresa} - {self.nivel_selo}'
 
 
+def caminho_documento(instance, filename):
+    # nome aleatório no disco: evita colisões e caracteres problemáticos
+    extensao = os.path.splitext(filename)[1].lower()
+    return f'documentos/empresa_{instance.empresa_id}/{uuid.uuid4().hex}{extensao}'
+
+
 class DocumentoComprobatorio(models.Model):
     empresa = models.ForeignKey(
         Empresa,
@@ -99,7 +109,18 @@ class DocumentoComprobatorio(models.Model):
         related_name='documentos'
     )
 
-    arquivo = models.CharField(max_length=500)
+    arquivo = models.FileField(
+        upload_to=caminho_documento,
+        validators=[validar_documento],
+    )
+    nome_original = models.CharField(max_length=255, blank=True)
+    enviado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='+',
+    )
     data_upload = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

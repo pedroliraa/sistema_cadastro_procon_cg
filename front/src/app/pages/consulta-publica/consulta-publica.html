@@ -25,35 +25,35 @@
     </form>
 
     <button type="button" class="filter-button" disabled title="Filtro por selo disponível em breve">
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="1.8"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    aria-hidden="true"
-  >
-    <path d="M4 7h16"></path>
-    <circle cx="9" cy="7" r="2" fill="currentColor" stroke="none"></circle>
-    <path d="M4 17h16"></path>
-    <circle cx="15" cy="17" r="2" fill="currentColor" stroke="none"></circle>
-  </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 7h16"></path>
+        <circle cx="9" cy="7" r="2" fill="currentColor" stroke="none"></circle>
+        <path d="M4 17h16"></path>
+        <circle cx="15" cy="17" r="2" fill="currentColor" stroke="none"></circle>
+      </svg>
 
-  <span>Filtrar por selo</span>
-</button>
+      <span>Filtrar por selo</span>
+    </button>
   </div>
 
   <nav class="category-filters" aria-label="Categorias de empresas">
-    <span class="category-chip active">Todas</span>
-    <span class="category-chip">Tecnologias</span>
-    <span class="category-chip">Moda</span>
-    <span class="category-chip">Casa</span>
-    <span class="category-chip">Alimentação</span>
-    <span class="category-chip">Saúde</span>
+    <button type="button" class="category-chip" [class.active]="areaSelecionada() === ''"
+      (click)="limparFiltros()">Todas</button>
+    <button type="button" class="category-chip" [class.active]="areaSelecionada() === 'Tecnologia'"
+      (click)="buscarPorArea('Tecnologia')">Tecnologias</button>
+
+    <button type="button" class="category-chip" [class.active]="areaSelecionada() === 'Moda'"
+      (click)="buscarPorArea('Moda')">Moda</button>
+
+    <button type="button" class="category-chip" [class.active]="areaSelecionada() === 'Casa'"
+      (click)="buscarPorArea('Casa')">Casa</button>
+
+    <button type="button" class="category-chip" [class.active]="areaSelecionada() === 'Alimentação'"
+      (click)="buscarPorArea('Alimentação')">Alimentação</button>
+
+    <button type="button" class="category-chip" [class.active]="areaSelecionada() === 'Saúde'"
+      (click)="buscarPorArea('Saúde')">Saúde</button>
   </nav>
   @if (erro()) {
   <p role="alert">{{ erro() }}</p>
@@ -70,6 +70,6 @@
   }
 
   @if (pesquisaRealizada() && !carregando() && !erro() && empresas().length === 0) {
-  <p>Nenhuma empresa encontrada para o nome pesquisado.</p>
+  <p>Nenhuma empresa encontrada para a pesquisa realizada.</p>
   }
 </main>

@@ -34,11 +34,21 @@ class EmpresaBuscaPublicaView(generics.ListAPIView):
 
     def get_queryset(self):
         nome = self.request.query_params.get('nome', '').strip()
+        area = self.request.query_params.get('area', '').strip()
 
-        if not nome:
+        if not nome and not area:
             return Empresa.objects.none()
 
-        return Empresa.objects.filter(
-            razao_social__icontains=nome,
-            status='ativo',
-        ).order_by('razao_social')
+        empresas = Empresa.objects.filter(status='ativo')
+
+        if nome:
+            empresas = empresas.filter(
+                razao_social__icontains=nome
+            )
+
+        if area:
+            empresas = empresas.filter(
+                areas__nome__icontains=area
+            )
+
+        return empresas.distinct().order_by('razao_social')

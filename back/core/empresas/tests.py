@@ -236,3 +236,51 @@ class EmpresaBuscaPublicaTests(APITestCase):
 
         self.assertEqual(resposta.status_code, status.HTTP_200_OK)
         self.assertEqual(resposta.data['count'], 0)
+    def test_busca_por_area_sem_login(self):
+        area = AreaAtuacao.objects.create(nome='Alimentação')
+        self.empresa.areas.add(area)
+
+        resposta = self.client.get(
+            self.url,
+            {'area': 'alimentação'}
+        )
+
+        self.assertEqual(resposta.status_code, status.HTTP_200_OK)
+        self.assertEqual(resposta.data['count'], 1)
+        self.assertEqual(
+            resposta.data['results'][0]['razao_social'],
+            'Mercadinho Boa Compra LTDA'
+        )
+
+    def test_busca_por_empresa_com_multiplas_areas(self):
+        tecnologia = AreaAtuacao.objects.create(nome='Tecnologia')
+        alimentacao = AreaAtuacao.objects.create(nome='Alimentação')
+
+        self.empresa.areas.add(tecnologia, alimentacao)
+
+        resposta = self.client.get(
+            self.url,
+            {'area': 'tecnologia'}
+        )
+
+        self.assertEqual(resposta.status_code, status.HTTP_200_OK)
+        self.assertEqual(resposta.data['count'], 1)
+        self.assertEqual(
+            resposta.data['results'][0]['razao_social'],
+            'Mercadinho Boa Compra LTDA'
+        )
+
+    def test_busca_por_area_nao_exibe_empresa_removida(self):
+        area = AreaAtuacao.objects.create(nome='Alimentação')
+        self.empresa.areas.add(area)
+
+        self.empresa.status = 'removido'
+        self.empresa.save()
+
+        resposta = self.client.get(
+            self.url,
+            {'area': 'alimentação'}
+        )
+
+        self.assertEqual(resposta.status_code, status.HTTP_200_OK)
+        self.assertEqual(resposta.data['count'], 0)

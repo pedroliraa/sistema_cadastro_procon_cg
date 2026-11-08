@@ -24,8 +24,10 @@ export class ConsultaPublica {
   readonly carregando = signal(false);
   readonly erro = signal('');
   readonly pesquisaRealizada = signal(false);
+  readonly areaSelecionada = signal('');
 
   buscar(nome: string): void {
+    this.areaSelecionada.set('');
     const termo = nome.trim();
 
     if (!termo) {
@@ -52,5 +54,32 @@ export class ConsultaPublica {
         this.carregando.set(false);
       },
     });
+  }
+  buscarPorArea(area: string): void {
+    this.areaSelecionada.set(area);
+    this.carregando.set(true);
+    this.erro.set('');
+
+    this.http.get<RespostaEmpresas>(
+      'http://127.0.0.1:8000/api/publico/empresas/',
+      { params: { area } }
+    ).subscribe({
+      next: (resposta) => {
+        this.empresas.set(resposta.results);
+        this.pesquisaRealizada.set(true);
+        this.carregando.set(false);
+      },
+      error: () => {
+        this.erro.set('Não foi possível realizar a consulta.');
+        this.carregando.set(false);
+      },
+    });
+  }
+  limparFiltros(): void {
+    this.areaSelecionada.set('');
+    this.empresas.set([]);
+    this.erro.set('');
+    this.pesquisaRealizada.set(false);
+    this.carregando.set(false);
   }
 }

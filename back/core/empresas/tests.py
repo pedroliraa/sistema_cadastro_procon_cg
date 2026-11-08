@@ -8,6 +8,8 @@ from rest_framework.test import APITestCase
 
 from .models import AreaAtuacao, Empresa
 from .validators import validar_cnpj
+from django.db import IntegrityError
+from django.test import TestCase
 
 
 class ValidarCnpjTests(SimpleTestCase):
@@ -132,4 +134,55 @@ class EmpresaAPITests(APITestCase):
         self.assertIn(
             resposta.status_code,
             (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN),
+        )
+class GestaoAreasAtuacaoTests(TestCase):
+
+    def test_cadastra_area_de_atuacao(self):
+        area = AreaAtuacao.objects.create(nome="Comércio")
+
+        self.assertEqual(area.nome, "Comércio")
+        self.assertEqual(str(area), "Comércio")
+
+    def test_nao_permite_area_com_nome_duplicado(self):
+        AreaAtuacao.objects.create(nome="Alimentação")
+
+        with self.assertRaises(IntegrityError):
+            AreaAtuacao.objects.create(nome="Alimentação")
+
+    def test_edita_area_de_atuacao(self):
+        area = AreaAtuacao.objects.create(nome="Comércio")
+
+        area.nome = "Comércio varejista"
+        area.save()
+        area.refresh_from_db()
+
+        self.assertEqual(area.nome, "Comércio varejista")
+
+    def test_empresa_pode_ter_multiplas_areas(self):
+        area_comercio = AreaAtuacao.objects.create(nome="Comércio")
+        area_alimentacao = AreaAtuacao.objects.create(nome="Alimentação")
+
+        empresa = Empresa.objects.create(
+            razao_social="Mercadinho Boa Compra LTDA",
+            cnpj="11222333000181",
+            endereco="Rua das Flores, 123",
+            bairro="Centro",
+            cidade="Campina Grande",
+            telefone="83999998888",
+            email="contato@boacompra.example.com",
+        )
+
+        empresa.areas.set([area_comercio, area_alimentacao])
+
+        self.assertEqual(empresa.areas.count(), 2)
+        self.assertIn(area_comercio, empresa.areas.all())
+        self.assertIn(area_alimentacao, empresa.areas.all())
+
+    def test_exclui_area_de_atuacao(self):
+        area = AreaAtuacao.objects.create(nome="Tecnologia")
+
+        area.delete()
+
+        self.assertFalse(
+            AreaAtuacao.objects.filter(nome="Tecnologia").exists()
         )

@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated
+
+from usuarios.permissions import IsAnalistaOuGestor, IsGestor
 
 from .models import Empresa
 from .serializers import EmpresaSerializer
@@ -13,5 +14,11 @@ class EmpresaPagination(PageNumberPagination):
 class EmpresaViewSet(viewsets.ModelViewSet):
     queryset = Empresa.objects.prefetch_related('areas')
     serializer_class = EmpresaSerializer
-    permission_classes = [IsAuthenticated]
     pagination_class = EmpresaPagination
+
+    def get_permissions(self):
+        # só o gestor pode excluir
+        if self.action == 'destroy':
+            return [IsGestor()]
+        # analista e gestor: listar, ver, criar e editar
+        return [IsAnalistaOuGestor()]

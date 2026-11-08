@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.test import SimpleTestCase
 from django.urls import reverse
@@ -34,6 +35,9 @@ class EmpresaAPITests(APITestCase):
         usuario = get_user_model().objects.create_user(
             username='admin-teste', password='senha-de-teste'
         )
+        # PB-06: a API exige perfil interno; Gestor porque o teste de
+        # remoção (DELETE) só é permitido a ele.
+        usuario.groups.add(Group.objects.get(name='Gestor'))
         self.client.force_authenticate(user=usuario)
         self.url_lista = reverse('empresa-list')
         self.area = AreaAtuacao.objects.create(nome='Alimentos')

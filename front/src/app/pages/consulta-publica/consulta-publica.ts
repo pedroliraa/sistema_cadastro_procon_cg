@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 interface EmpresaPublica {
   id: number;
   razao_social: string;
+  selo: string | null;
 }
 
 interface RespostaEmpresas {

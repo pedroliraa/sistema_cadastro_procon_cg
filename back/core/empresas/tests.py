@@ -6,7 +6,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from .models import AreaAtuacao, Empresa
+from .models import Empresa, AreaAtuacao, NivelSelo
 from .validators import validar_cnpj
 from django.db import IntegrityError
 from django.test import TestCase
@@ -284,3 +284,16 @@ class EmpresaBuscaPublicaTests(APITestCase):
 
         self.assertEqual(resposta.status_code, status.HTTP_200_OK)
         self.assertEqual(resposta.data['count'], 0)
+    def test_exibe_selo_atual_sem_login(self):
+        selo = NivelSelo.objects.create(nome='Ouro')
+        self.empresa.nivel_selo_atual = selo
+        self.empresa.save()
+
+        resposta = self.client.get(
+            self.url,
+            {'nome': 'mercadinho'}
+        )
+
+        self.assertEqual(resposta.status_code, status.HTTP_200_OK)
+        self.assertEqual(resposta.data['count'], 1)
+        self.assertEqual(resposta.data['results'][0]['selo'], 'Ouro')

@@ -17,7 +17,13 @@ class EmpresaSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'nivel_selo_atual', 'status']
 
 class EmpresaPublicaSerializer(serializers.ModelSerializer):
+    selo = serializers.CharField(
+        source='nivel_selo_atual.nome',
+        read_only=True,
+        allow_null=True
+    )
+
     class Meta:
         model = Empresa
-        fields = ['id', 'razao_social']
-        read_only_fields = ['id', 'razao_social']
+        fields = ['id', 'razao_social', 'selo']
+        read_only_fields = ['id', 'razao_social', 'selo']

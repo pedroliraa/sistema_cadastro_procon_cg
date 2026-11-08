@@ -38,22 +38,12 @@
   </div>
 
   <nav class="category-filters" aria-label="Categorias de empresas">
-    <button type="button" class="category-chip" [class.active]="areaSelecionada() === ''"
-      (click)="limparFiltros()">Todas</button>
-    <button type="button" class="category-chip" [class.active]="areaSelecionada() === 'Tecnologia'"
-      (click)="buscarPorArea('Tecnologia')">Tecnologias</button>
-
-    <button type="button" class="category-chip" [class.active]="areaSelecionada() === 'Moda'"
-      (click)="buscarPorArea('Moda')">Moda</button>
-
-    <button type="button" class="category-chip" [class.active]="areaSelecionada() === 'Casa'"
-      (click)="buscarPorArea('Casa')">Casa</button>
-
-    <button type="button" class="category-chip" [class.active]="areaSelecionada() === 'Alimentação'"
-      (click)="buscarPorArea('Alimentação')">Alimentação</button>
-
-    <button type="button" class="category-chip" [class.active]="areaSelecionada() === 'Saúde'"
-      (click)="buscarPorArea('Saúde')">Saúde</button>
+    <span class="category-chip active">Todas</span>
+    <span class="category-chip">Tecnologias</span>
+    <span class="category-chip">Moda</span>
+    <span class="category-chip">Casa</span>
+    <span class="category-chip">Alimentação</span>
+    <span class="category-chip">Saúde</span>
   </nav>
   @if (erro()) {
   <p role="alert">{{ erro() }}</p>
@@ -64,12 +54,20 @@
 
   <ul>
     @for (empresa of empresas(); track empresa.id) {
-    <li>{{ empresa.razao_social }}</li>
+    <li>
+      {{ empresa.razao_social }}
+
+      @if (empresa.selo) {
+      <span class="empresa-selo">
+        🏅 Selo {{ empresa.selo }}
+      </span>
+      }
+    </li>
     }
   </ul>
   }
 
   @if (pesquisaRealizada() && !carregando() && !erro() && empresas().length === 0) {
-  <p>Nenhuma empresa encontrada para a pesquisa realizada.</p>
+  <p>Nenhuma empresa encontrada para o nome pesquisado.</p>
   }
 </main>

@@ -1,3 +1,697 @@
-/* You can add global styles to this file, and also import other style files */
+  /* ---------- Tokens (extraídos do Figma) ---------- */
+  :root {
+      --bg: #f8fbff;
+      --ink: #030211;
+      --navy: #052749;
+      --blue: #1557b7;
+      --lime: #afe010;
+      --periwinkle: #6182f4;
+      --deep: #0b1f44;
+      --hero: #1e366b;
+      --placeholder: #a5b9fe;
+      --white: #ffffff;
+      --shadow: 0 4px 12px rgba(0, 0, 0, .18);
+      --font: "Montserrat", system-ui, sans-serif;
+      --font-display: "Montserrat Alternates", "Montserrat", system-ui, sans-serif;
+      --max: 1200px;
+  }
 
-@import 'tailwindcss';
+  *,
+  *::before,
+  *::after {
+      box-sizing: border-box;
+  }
+
+  html {
+      scroll-behavior: smooth;
+  }
+
+  body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--navy);
+      font-family: var(--font);
+      font-weight: 500;
+      line-height: 1.4;
+  }
+
+  img {
+      max-width: 100%;
+      display: block;
+  }
+
+  a {
+      color: inherit;
+      text-decoration: none;
+  }
+
+  button {
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+  }
+
+  :focus-visible {
+      outline: 3px solid var(--periwinkle);
+      outline-offset: 3px;
+  }
+
+  .wrap {
+      width: min(var(--max), 100% - 48px);
+      margin-inline: auto;
+  }
+
+  .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+  }
+
+  /* ---------- Navbar ---------- */
+  .nav {
+      border-bottom: 1px solid var(--lime);
+  }
+
+  .nav .wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-block: 20px;
+  }
+
+  .nav__logo img {
+      height: 50px;
+      width: auto;
+  }
+
+  .nav__links {
+      display: flex;
+      gap: 40px;
+  }
+
+  .nav__links a {
+      font-size: 15px;
+      padding-block: 4px;
+  }
+
+  .nav__links a[aria-current="page"] {
+      color: var(--blue);
+      font-weight: 600;
+  }
+
+  /* ---------- Views ---------- */
+  .view {
+      display: none;
+      padding-block: 48px 96px;
+  }
+
+  .view.is-active {
+      display: block;
+  }
+
+  .view>.wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 72px;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+      margin: 0;
+  }
+
+  .h-section {
+      font-size: 28px;
+      font-weight: 600;
+  }
+
+  .sub {
+      font-size: 14px;
+      color: var(--blue);
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+      position: relative;
+      min-height: 340px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--hero);
+      display: grid;
+      place-items: center;
+      padding: 32px;
+  }
+
+  /* ---------- Busca ---------- */
+  .search-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+  }
+
+  .search-block h2 {
+      color: var(--blue);
+  }
+
+  .search {
+      position: relative;
+      width: min(720px, 100%);
+  }
+
+  .field {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      height: 56px;
+      padding-inline: 28px 24px;
+      border: 1px solid var(--ink);
+      border-radius: 28px;
+      background: transparent;
+  }
+
+  .field input {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      background: transparent;
+      font: inherit;
+      font-size: 16px;
+      color: var(--navy);
+      outline: none;
+  }
+
+  .field input::placeholder {
+      color: var(--placeholder);
+  }
+
+  .field:focus-within {
+      outline: 3px solid var(--periwinkle);
+      outline-offset: 3px;
+  }
+
+  .field svg {
+      flex: none;
+  }
+
+  /* ---------- Dropdowns ---------- */
+  .pop {
+      position: absolute;
+      z-index: 20;
+      top: calc(100% + 8px);
+      background: var(--white);
+      border: 1px solid var(--ink);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 16px 20px;
+  }
+
+  .pop[hidden] {
+      display: none;
+  }
+
+  .search .pop {
+      left: 0;
+      right: 0;
+      padding: 20px 28px;
+  }
+
+  .pop__title {
+      font-weight: 600;
+      font-size: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--lime);
+      margin-bottom: 6px;
+  }
+
+  .pop ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+  }
+
+  .pop li button {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      padding: 8px 0;
+      border: 0;
+      background: none;
+      text-align: left;
+      font-size: 15px;
+      color: var(--navy);
+  }
+
+  .pop li button:hover {
+      color: var(--blue);
+  }
+
+  .pop--seals {
+      right: 0;
+      width: 300px;
+  }
+
+  .pop--seals img {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+  }
+
+  /* ---------- Chips ---------- */
+  .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+  }
+
+  .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border: 1px solid var(--blue);
+      border-radius: 100px;
+      background: transparent;
+      color: #082649;
+      font-size: 14px;
+  }
+
+  .chip[aria-pressed="true"] {
+      background: var(--blue);
+      color: var(--white);
+  }
+
+  .chip svg {
+      width: 16px;
+      height: 16px;
+      flex: none;
+  }
+
+  .chip--tag {
+      border-color: var(--ink);
+      cursor: default;
+  }
+
+  /* ---------- Cards de empresa ---------- */
+  .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 24px;
+  }
+
+  .company {
+      position: relative;
+      background: var(--white);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+  }
+
+  .company a {
+      display: block;
+  }
+
+  .company__img {
+      position: relative;
+      aspect-ratio: 160 / 112;
+      background: #e8eef8;
+  }
+
+  .company__img>img:first-child {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+  }
+
+  .company__badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 64px;
+      height: 56px;
+      object-fit: contain;
+  }
+
+  .company__info {
+      padding: 16px 20px 20px;
+      display: grid;
+      gap: 4px;
+  }
+
+  .company__name {
+      font-weight: 600;
+      font-size: 16px;
+  }
+
+  .company__seal {
+      font-size: 12px;
+      color: var(--blue);
+  }
+
+  .empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 48px 0;
+      color: var(--blue);
+  }
+
+  /* ---------- Seção Selos ---------- */
+  .seals {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      text-align: center;
+  }
+
+  .seals h2 {
+      font: 700 clamp(30px, 4vw, 44px)/1.15 var(--font-display);
+      color: var(--ink);
+  }
+
+  .seal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      width: 100%;
+      margin-top: 28px;
+  }
+
+  .seal {
+      --c: var(--blue);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      padding: 32px 24px 28px;
+      border: 1px solid var(--c);
+      border-radius: 28px;
+  }
+
+  .seal img {
+      width: 140px;
+      height: 140px;
+      object-fit: contain;
+  }
+
+  .seal h3 {
+      font-size: 22px;
+      font-weight: 500;
+      color: #000;
+  }
+
+  .seal h3 b {
+      font-weight: 700;
+  }
+
+  .seal p {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--blue);
+  }
+
+  .btn {
+      display: block;
+      width: 100%;
+      padding: 10px 24px;
+      border: 1px solid var(--blue);
+      border-radius: 20px;
+      background: var(--blue);
+      color: var(--bg);
+      font-size: 14px;
+      font-weight: 400;
+      text-align: center;
+  }
+
+  .btn:hover {
+      background: #0f4694;
+  }
+
+  .seal--excelencia {
+      --c: var(--lime);
+  }
+
+  .seal--referencia {
+      --c: var(--blue);
+  }
+
+  .seal--confiavel {
+      --c: var(--deep);
+  }
+
+  .seal--qualificado {
+      --c: var(--periwinkle);
+  }
+
+  /* ---------- Explorar ---------- */
+  .page-head {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+  }
+
+  .toolbar {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+  }
+
+  .toolbar .search {
+      flex: 1;
+      width: auto;
+  }
+
+  .filter {
+      position: relative;
+      flex: none;
+  }
+
+  .filter>button {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      height: 56px;
+      padding-inline: 24px;
+      border: 1px solid var(--blue);
+      border-radius: 28px;
+      background: transparent;
+      font-size: 15px;
+      color: var(--navy);
+  }
+
+  .results-note {
+      font-size: 14px;
+      color: var(--blue);
+  }
+
+  /* ---------- Perfil ---------- */
+  .cover {
+      position: relative;
+      margin-bottom: 0;
+  }
+
+  .cover__img {
+      width: 100%;
+      height: clamp(220px, 32vw, 420px);
+      object-fit: cover;
+      border-radius: 16px;
+      background: #1a6cf0;
+  }
+
+  .identity {
+      position: relative;
+      margin: -60px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      padding: 28px 48px 28px 248px;
+      background: var(--white);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+  }
+
+  .identity h1 {
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--ink);
+  }
+
+  .identity p {
+      color: var(--blue);
+      font-size: 16px;
+      margin-top: 6px;
+  }
+
+  .avatar {
+      position: absolute;
+      left: 56px;
+      top: -80px;
+      width: 160px;
+      height: 160px;
+  }
+
+  .avatar>img:first-child {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 6px solid var(--white);
+      object-fit: cover;
+      background: #1a6cf0;
+  }
+
+  .avatar__badge {
+      position: absolute;
+      top: -6px;
+      right: -10px;
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
+  }
+
+  .contact {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+  }
+
+  .contact a {
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+  }
+
+  .profile-cols {
+      display: grid;
+      grid-template-columns: 480px 1fr;
+      gap: 32px;
+      align-items: start;
+  }
+
+  .card {
+      background: var(--white);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+  }
+
+  .card h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 14px;
+  }
+
+  dl {
+      margin: 0;
+      display: grid;
+      gap: 14px;
+      font-size: 14px;
+      font-weight: 400;
+  }
+
+  dt {
+      display: inline;
+      font-weight: 600;
+  }
+
+  dd {
+      display: inline;
+      margin: 0;
+  }
+
+  .col-left {
+      display: grid;
+      gap: 20px;
+  }
+
+  .col-right h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 20px;
+  }
+
+  .achievements {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+  }
+
+  .achievement {
+      --c: var(--blue);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      text-align: center;
+      padding: 24px 12px 22px;
+      border: 1px solid var(--c);
+      border-radius: 20px;
+      font-size: 14px;
+  }
+
+  .achievement img {
+      width: 112px;
+      height: 112px;
+      object-fit: contain;
+  }
+
+  .achievement b {
+      font-weight: 700;
+  }
+
+  .achievement small {
+      font-size: 11px;
+      font-weight: 400;
+  }
+
+  .achievement strong {
+      font-size: 12px;
+      font-weight: 700;
+  }
+
+  /* ---------- Responsivo ---------- */
+  @media (max-width: 960px) {
+      .profile-cols {
+          grid-template-columns: 1fr;
+      }
+
+      .identity {
+          padding: 112px 28px 28px;
+      }
+
+      .avatar {
+          left: 28px;
+      }
+  }
+
+  @media (max-width: 640px) {
+      .nav__links {
+          gap: 20px;
+      }
+
+      .toolbar {
+          flex-direction: column;
+          align-items: stretch;
+      }
+
+      .pop--seals {
+          width: 100%;
+      }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+      html {
+          scroll-behavior: auto;
+      }
+  }

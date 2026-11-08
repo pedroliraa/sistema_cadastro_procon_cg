@@ -186,3 +186,53 @@ class GestaoAreasAtuacaoTests(TestCase):
         self.assertFalse(
             AreaAtuacao.objects.filter(nome="Tecnologia").exists()
         )
+
+class EmpresaBuscaPublicaTests(APITestCase):
+
+    def setUp(self):
+        self.url = reverse('empresa-busca-publica')
+
+        self.empresa = Empresa.objects.create(
+            razao_social='Mercadinho Boa Compra LTDA',
+            cnpj='11222333000181',
+            endereco='Rua das Flores, 123',
+            bairro='Centro',
+            cidade='Campina Grande',
+            telefone='83999998888',
+            email='contato@boacompra.example.com',
+        )
+
+    def test_busca_por_nome_sem_login(self):
+        resposta = self.client.get(self.url, {'nome': 'mercadinho'})
+
+        self.assertEqual(resposta.status_code, status.HTTP_200_OK)
+        self.assertEqual(resposta.data['count'], 1)
+        self.assertEqual(
+            resposta.data['results'][0]['razao_social'],
+            'Mercadinho Boa Compra LTDA'
+        )
+
+    def test_busca_sem_nome_retorna_lista_vazia(self):
+        resposta = self.client.get(self.url)
+
+        self.assertEqual(resposta.status_code, status.HTTP_200_OK)
+        self.assertEqual(resposta.data['count'], 0)
+
+    def test_nao_expoe_dados_privados(self):
+        resposta = self.client.get(self.url, {'nome': 'mercadinho'})
+
+        empresa = resposta.data['results'][0]
+
+        self.assertIn('razao_social', empresa)
+        self.assertNotIn('cnpj', empresa)
+        self.assertNotIn('telefone', empresa)
+        self.assertNotIn('email', empresa)
+
+    def test_nao_exibe_empresa_removida(self):
+        self.empresa.status = 'removido'
+        self.empresa.save()
+
+        resposta = self.client.get(self.url, {'nome': 'mercadinho'})
+
+        self.assertEqual(resposta.status_code, status.HTTP_200_OK)
+        self.assertEqual(resposta.data['count'], 0)

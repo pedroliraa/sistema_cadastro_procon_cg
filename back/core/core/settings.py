@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_spectacular',
     'empresas',
-    'rest_framework.authtoken',
     'usuarios',
 ]
 
@@ -163,6 +162,8 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
     'SERVE_PERMISSIONS': ['rest_framework.permissions.IsAdminUser'],
 }
+
+MEDIA_ROOT = BASE_DIR / 'media'
 # Origens autorizadas durante o desenvolvimento local
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:4200',

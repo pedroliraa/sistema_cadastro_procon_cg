@@ -1,0 +1,105 @@
+.search-button {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    padding: 8px;
+    border: none;
+    background: transparent;
+    color: var(--navy);
+    cursor: pointer;
+}
+
+.search-button:hover {
+    color: var(--blue);
+}
+
+.search-button:disabled {
+    opacity: 0.5;
+    cursor: wait;
+}
+
+.consulta-publica .search {
+    width: 100%;
+    max-width: 635px;
+    margin-top: 16px;
+}
+
+.consulta-publica .field {
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .consulta-publica .search {
+        max-width: 100%;
+    }
+}
+
+.search-filters {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.consulta-publica .search-filters .search {
+  flex: 1;
+  min-width: 0;
+  max-width: none;
+  margin-top: 0;
+}
+
+.filter-button {
+  padding: 14px 22px;
+  border: 1px solid #1557b7;
+  border-radius: 999px;
+  background: transparent;
+  color: #1557b7;
+  white-space: nowrap;
+  font: inherit;
+}
+
+.filter-button:disabled {
+  opacity: 1;
+  color: #052749;
+  border-color: #1557b7;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .search-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.category-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.category-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  border: 1px solid #d5deeb;
+  border-radius: 999px;
+  background: transparent;
+  color: #052749;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.category-chip.active {
+  background: #1557b7;
+  border-color: #1557b7;
+  color: white;
+}
+.filter-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}

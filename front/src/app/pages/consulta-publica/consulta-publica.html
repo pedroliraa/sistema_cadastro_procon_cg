@@ -1,0 +1,75 @@
+<main class="consulta-publica wrap">
+  <section class="page-head">
+    <h1 class="h-section">Explorar Categorias</h1>
+  </section>
+
+  <div class="search-filters">
+    <form class="search" (submit)="$event.preventDefault(); buscar(nome.value)">
+      <label for="nome" class="sr-only">Nome da empresa</label>
+
+      <div class="field">
+        <input #nome id="nome" type="search" name="nome" placeholder="Pesquise uma empresa ou categoria" />
+
+        <button type="submit" [disabled]="carregando()" aria-label="Buscar empresas" class="search-button">
+          @if (carregando()) {
+          <span>Buscando...</span>
+          } @else {
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m20 20-4-4"></path>
+          </svg>
+          }
+        </button>
+      </div>
+    </form>
+
+    <button type="button" class="filter-button" disabled title="Filtro por selo disponível em breve">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M4 7h16"></path>
+    <circle cx="9" cy="7" r="2" fill="currentColor" stroke="none"></circle>
+    <path d="M4 17h16"></path>
+    <circle cx="15" cy="17" r="2" fill="currentColor" stroke="none"></circle>
+  </svg>
+
+  <span>Filtrar por selo</span>
+</button>
+  </div>
+
+  <nav class="category-filters" aria-label="Categorias de empresas">
+    <span class="category-chip active">Todas</span>
+    <span class="category-chip">Tecnologias</span>
+    <span class="category-chip">Moda</span>
+    <span class="category-chip">Casa</span>
+    <span class="category-chip">Alimentação</span>
+    <span class="category-chip">Saúde</span>
+  </nav>
+  @if (erro()) {
+  <p role="alert">{{ erro() }}</p>
+  }
+
+  @if (!carregando() && empresas().length > 0) {
+  <h2>Empresas encontradas</h2>
+
+  <ul>
+    @for (empresa of empresas(); track empresa.id) {
+    <li>{{ empresa.razao_social }}</li>
+    }
+  </ul>
+  }
+
+  @if (pesquisaRealizada() && !carregando() && !erro() && empresas().length === 0) {
+  <p>Nenhuma empresa encontrada para o nome pesquisado.</p>
+  }
+</main>

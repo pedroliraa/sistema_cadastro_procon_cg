@@ -2,6 +2,7 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from .views import DocumentoComprobatorioViewSet, EmpresaViewSet
+from .views import EmpresaViewSet, EmpresaBuscaPublicaView
 
 router = DefaultRouter()
 router.register('empresas', EmpresaViewSet, basename='empresa')

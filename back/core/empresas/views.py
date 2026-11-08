@@ -11,8 +11,12 @@ from usuarios.permissions import IsAnalistaOuGestor, IsGestor
 from .models import DocumentoComprobatorio, Empresa
 from .serializers import DocumentoComprobatorioSerializer, EmpresaSerializer
 
+from rest_framework import generics
+from rest_framework.permissions import AllowAny
 
+from .serializers import EmpresaPublicaSerializer
 class EmpresaPagination(PageNumberPagination):
+
     page_size = 20
 
 

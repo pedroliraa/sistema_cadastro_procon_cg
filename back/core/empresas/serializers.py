@@ -35,3 +35,8 @@ class DocumentoComprobatorioSerializer(serializers.ModelSerializer):
             'empresa-documento-download',
             args=[obj.empresa_id, obj.pk],
         )
+class EmpresaPublicaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Empresa
+        fields = ['id', 'razao_social']
+        read_only_fields = ['id', 'razao_social']

@@ -15,3 +15,9 @@ class EmpresaSerializer(serializers.ModelSerializer):
         # Selo e status têm regras próprias (PB-10 e PB-11), então não se
         # alteram pelo CRUD básico.
         read_only_fields = ['id', 'nivel_selo_atual', 'status']
+
+class EmpresaPublicaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Empresa
+        fields = ['id', 'razao_social']
+        read_only_fields = ['id', 'razao_social']

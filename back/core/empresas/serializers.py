@@ -37,10 +37,53 @@ class EmpresaPublicaSerializer(serializers.ModelSerializer):
         allow_null=True
     )
 
+    areas = AreaAtuacaoSerializer(
+        many=True,
+        read_only=True
+    )
+
     class Meta:
         model = Empresa
-        fields = ['id', 'razao_social', 'selo']
-        read_only_fields = ['id', 'razao_social', 'selo']
+        fields = [
+            'id',
+            'razao_social',
+            'foto',
+            'areas',
+            'selo',
+        ]
+        read_only_fields = fields
+
+    areas = AreaAtuacaoSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Empresa
+        fields = [
+            'id',
+            'razao_social',
+            'foto',
+            'endereco',
+            'bairro',
+            'cidade',
+            'areas',
+            'selo',
+        ]
+        read_only_fields = fields
+
+    areas = AreaAtuacaoSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Empresa
+        fields = [
+            'id',
+            'razao_social',
+            'foto',
+            'endereco',
+            'bairro',
+            'cidade',
+            'areas',
+            'selo',
+        ]
+        read_only_fields = fields
 
 
 # PB-11

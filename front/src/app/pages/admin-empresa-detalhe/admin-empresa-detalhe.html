@@ -7,8 +7,9 @@
   @if (empresa(); as empresa) {
   <section class="cabecalho">
     <div>
-      <h1 class="h-section">{{ empresa.razao_social }}</h1>
-      <p class="cnpj">CNPJ {{ empresa.cnpj }}</p>
+      <a class="botao" [routerLink]="['/admin/empresas', empresa.id, 'editar']">
+        ✏️ Editar empresa
+      </a>
     </div>
     <span [class]="'status status--' + empresa.status">{{ rotuloStatus[empresa.status] }}</span>
   </section>
@@ -66,8 +67,7 @@
       <h2>Alterar status</h2>
 
       @if (opcoesStatus().length > 0) {
-      <form class="formulario"
-        (submit)="$event.preventDefault(); alterarStatus(novoStatus.value, motivoStatus)">
+      <form class="formulario" (submit)="$event.preventDefault(); alterarStatus(novoStatus.value, motivoStatus)">
         <label for="novo-status">Novo status</label>
         <select #novoStatus id="novo-status">
           <option value="">Selecione...</option>

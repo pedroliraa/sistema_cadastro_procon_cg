@@ -2,6 +2,9 @@
   <section class="admin__topo">
     <div>
       <h1 class="h-section">Empresas cadastradas</h1>
+      <a routerLink="/admin/empresas/nova" class="botao-cadastrar">
+        + Cadastrar empresa
+      </a>
       @if (auth.usuario(); as usuario) {
       <p class="admin__usuario">
         {{ usuario.username }} · {{ usuario.perfil }}

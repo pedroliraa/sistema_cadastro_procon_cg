@@ -1,0 +1,94 @@
+<main class="empresa-formulario">
+    <a [routerLink]="empresaId !== null
+    ? ['/admin/empresas', empresaId]
+    : ['/admin/empresas']" class="voltar">
+        ← Voltar
+    </a>
+    <h1>{{ empresaId !== null ? 'Editar empresa' : 'Cadastrar empresa' }}</h1>
+
+    <form [formGroup]="formulario" (ngSubmit)="salvarEmpresa()">
+        <div>
+            <label for="razao_social">Razão social</label>
+            <input id="razao_social" type="text" formControlName="razao_social" required />
+        </div>
+
+        <div>
+            <label for="cnpj">CNPJ</label>
+            <input id="cnpj" type="text" formControlName="cnpj" maxlength="14" placeholder="Somente números" required />
+        </div>
+
+        <div>
+            <label for="endereco">Endereço</label>
+            <input id="endereco" type="text" formControlName="endereco" required />
+        </div>
+
+        <div>
+            <label for="bairro">Bairro</label>
+            <input id="bairro" type="text" formControlName="bairro" required />
+        </div>
+
+        <div>
+            <label for="cidade">Cidade</label>
+            <input id="cidade" type="text" formControlName="cidade" required />
+        </div>
+
+        <div>
+            <label for="telefone">Telefone</label>
+            <input id="telefone" type="tel" formControlName="telefone" maxlength="11" placeholder="DDD + número"
+                required />
+        </div>
+
+        <div>
+            <label for="email">E-mail</label>
+            <input id="email" type="email" formControlName="email" required />
+        </div>
+        <div class="campo-areas">
+            <label for="areas">Áreas de atuação</label>
+            <select id="areas" multiple (change)="selecionarAreas($event)">
+                @for (area of areasDisponiveis(); track area.id) {
+                <option [value]="area.id" [selected]="formulario.controls.areas.value.includes(area.id)">
+                    {{ area.nome }}
+                </option>
+                }
+            </select>
+
+            <small>
+                Segure Ctrl para selecionar mais de uma categoria.
+            </small>
+        </div>
+
+        <div class="campo-foto">
+            <label for="foto">Foto ou logotipo da empresa</label>
+
+            <input id="foto" type="file" accept="image/png,image/jpeg,image/webp" (change)="selecionarFoto($event)" />
+
+            @if (fotoPreview()) {
+            <img class="foto-preview" [src]="fotoPreview()" alt="Pré-visualização da foto da empresa" />
+            }
+
+            <small>
+                Formatos permitidos: PNG, JPG ou WebP.
+            </small>
+        </div>
+        <button type="submit" [disabled]="formulario.invalid || salvando()">
+            {{
+            salvando()
+            ? 'Salvando...'
+            : empresaId !== null
+            ? 'Salvar alterações'
+            : 'Cadastrar empresa'
+            }}
+        </button>
+    </form>
+
+    @if (mensagemSucesso()) {
+    <p class="mensagem-sucesso" role="status">
+        {{ mensagemSucesso() }}
+    </p>
+    }
+    @if (mensagemErro()) {
+    <p class="mensagem-erro" role="alert">
+        {{ mensagemErro() }}
+    </p>
+    }
+</main>

@@ -68,6 +68,12 @@ class Empresa(models.Model):
     )
     email = models.EmailField()
 
+    foto = models.ImageField(
+    upload_to='empresas/',
+    null=True,
+    blank=True
+)
+
     areas = models.ManyToManyField(
         AreaAtuacao,
         related_name='empresas'

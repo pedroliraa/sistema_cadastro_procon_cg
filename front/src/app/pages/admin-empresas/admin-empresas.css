@@ -118,3 +118,17 @@
   border: 1px solid #d1d5db;
   color: #1f2937;
 }
+.botao-cadastrar {
+  display: inline-block;
+  margin: 16px 0;
+  padding: 12px 20px;
+  background-color: #3b5db7;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.botao-cadastrar:hover {
+  background-color: #2d4892;
+}

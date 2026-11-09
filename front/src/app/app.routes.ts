@@ -6,6 +6,7 @@ import { Login } from './pages/login/login';
 import { AdminEmpresas } from './pages/admin-empresas/admin-empresas';
 import { AdminEmpresaDetalhe } from './pages/admin-empresa-detalhe/admin-empresa-detalhe';
 import { authGuard } from './core/auth.guard';
+import { AdminEmpresaFormulario } from './pages/admin-empresa-formulario/admin-empresa-formulario';
 
 export const routes: Routes = [
   {
@@ -32,7 +33,11 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'empresas', pathMatch: 'full' },
       { path: 'empresas', component: AdminEmpresas },
+      { path: 'empresas/nova', component: AdminEmpresaFormulario },
+      { path: 'empresas/:id/editar', component: AdminEmpresaFormulario },
       { path: 'empresas/:id', component: AdminEmpresaDetalhe },
+      
+      
     ],
   },
 ];

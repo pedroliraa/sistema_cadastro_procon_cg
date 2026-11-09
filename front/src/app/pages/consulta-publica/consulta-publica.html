@@ -90,6 +90,11 @@
   }
 
   @if (pesquisaRealizada() && !carregando() && !erro() && empresas().length === 0) {
-  <p>Nenhuma empresa encontrada para o nome pesquisado.</p>
+<p>
+  @if (areaSelecionada()) {
+    Nenhuma empresa encontrada na categoria {{ areaSelecionada() }}.
+  } @else {
+    Nenhuma empresa encontrada para o nome pesquisado.
   }
+</p>  }
 </main>

@@ -1,0 +1,22 @@
+<main class="login wrap">
+  <section class="login__card">
+    <h1 class="h-section">Área restrita</h1>
+    <p class="login__sub">Acesso da equipe PROCON-CG / UNIFACISA</p>
+
+    <form (submit)="$event.preventDefault(); entrar(usuario.value, senha.value)">
+      <label for="usuario">Usuário</label>
+      <input #usuario id="usuario" type="text" autocomplete="username" />
+
+      <label for="senha">Senha</label>
+      <input #senha id="senha" type="password" autocomplete="current-password" />
+
+      @if (erro()) {
+      <p class="login__erro" role="alert">{{ erro() }}</p>
+      }
+
+      <button type="submit" [disabled]="carregando()">
+        {{ carregando() ? 'Entrando...' : 'Entrar' }}
+      </button>
+    </form>
+  </section>
+</main>

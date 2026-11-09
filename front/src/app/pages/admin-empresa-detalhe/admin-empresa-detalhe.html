@@ -1,0 +1,124 @@
+<main class="detalhe wrap">
+  <a routerLink="/admin/empresas" class="voltar">← Voltar para a lista</a>
+
+  @if (carregando()) {
+  <p>Carregando...</p>
+  } @else {
+  @if (empresa(); as empresa) {
+  <section class="cabecalho">
+    <div>
+      <h1 class="h-section">{{ empresa.razao_social }}</h1>
+      <p class="cnpj">CNPJ {{ empresa.cnpj }}</p>
+    </div>
+    <span [class]="'status status--' + empresa.status">{{ rotuloStatus[empresa.status] }}</span>
+  </section>
+
+  @if (erro()) {
+  <p class="mensagem mensagem--erro" role="alert">{{ erro() }}</p>
+  }
+  @if (sucesso()) {
+  <p class="mensagem mensagem--sucesso" role="status">{{ sucesso() }}</p>
+  }
+
+  <div class="grade">
+    <!-- Dados -->
+    <section class="cartao">
+      <h2>Dados</h2>
+      <dl>
+        <dt>Endereço</dt>
+        <dd>{{ empresa.endereco }} — {{ empresa.bairro }}, {{ empresa.cidade }}</dd>
+        <dt>Telefone</dt>
+        <dd>{{ empresa.telefone }}</dd>
+        <dt>E-mail</dt>
+        <dd>{{ empresa.email }}</dd>
+      </dl>
+    </section>
+
+    <!-- PB-11: revalidação -->
+    <section class="cartao">
+      <h2>Revalidação periódica</h2>
+      <dl>
+        <dt>Última validação</dt>
+        <dd>{{ formatarData(empresa.data_ultima_validacao) }}</dd>
+        <dt>Próxima revalidação</dt>
+        <dd>
+          {{ formatarData(empresa.data_proxima_revalidacao) }}
+          @if (empresa.revalidacao_vencida) {
+          <span class="vencida">Vencida</span>
+          }
+        </dd>
+      </dl>
+
+      @if (empresa.status !== 'removido') {
+      <form class="formulario" (submit)="$event.preventDefault(); revalidar(motivoRevalidacao)">
+        <label for="motivo-revalidacao">Observação (opcional)</label>
+        <input #motivoRevalidacao id="motivo-revalidacao" type="text"
+          placeholder="Ex.: visita de verificação realizada" />
+        <button type="submit" class="botao" [disabled]="salvando()">Registrar revalidação</button>
+      </form>
+      } @else {
+      <p class="ajuda">Empresa removida não pode ser revalidada. Reative-a primeiro.</p>
+      }
+    </section>
+
+    <!-- PB-11: alteração de status -->
+    <section class="cartao">
+      <h2>Alterar status</h2>
+
+      @if (opcoesStatus().length > 0) {
+      <form class="formulario"
+        (submit)="$event.preventDefault(); alterarStatus(novoStatus.value, motivoStatus)">
+        <label for="novo-status">Novo status</label>
+        <select #novoStatus id="novo-status">
+          <option value="">Selecione...</option>
+          @for (opcao of opcoesStatus(); track opcao) {
+          <option [value]="opcao">{{ rotuloStatus[opcao] }}</option>
+          }
+        </select>
+
+        <label for="motivo-status">Motivo</label>
+        <textarea #motivoStatus id="motivo-status" rows="3"
+          placeholder="Ex.: descumprimento do critério X do regulamento"></textarea>
+
+        <button type="submit" class="botao" [disabled]="salvando()">Salvar</button>
+      </form>
+      } @else {
+      <p class="ajuda">Apenas o gestor pode reativar uma empresa removida.</p>
+      }
+    </section>
+  </div>
+
+  <!-- PB-11: histórico -->
+  <section class="cartao">
+    <h2>Histórico de status</h2>
+
+    @if (historico().length === 0) {
+    <p class="ajuda">Nenhuma alteração registrada.</p>
+    } @else {
+    <ul class="historico">
+      @for (item of historico(); track item.id) {
+      <li>
+        <div class="historico__topo">
+          <strong>
+            @if (item.tipo === 'revalidacao') {
+            Revalidação
+            } @else {
+            {{ rotuloStatus[item.status_anterior] }} → {{ rotuloStatus[item.status_novo] }}
+            }
+          </strong>
+          <span class="historico__data">
+            {{ item.data_alteracao | date: 'dd/MM/yyyy HH:mm' }}
+            @if (item.usuario) { · {{ item.usuario }} } @else { · automático }
+          </span>
+        </div>
+        <p>{{ item.motivo }}</p>
+      </li>
+      }
+    </ul>
+    }
+  </section>
+  } @else {
+  <p class="mensagem mensagem--erro">{{ erro() }}</p>
+  }
+  }
+</main>

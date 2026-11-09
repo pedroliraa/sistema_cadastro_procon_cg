@@ -2,6 +2,10 @@ import { Routes } from '@angular/router';
 import { ConsultaPublica } from './pages/consulta-publica/consulta-publica';
 import { Selos } from './pages/selos/selos';
 import { Inicio } from './pages/inicio/inicio';
+import { Login } from './pages/login/login';
+import { AdminEmpresas } from './pages/admin-empresas/admin-empresas';
+import { AdminEmpresaDetalhe } from './pages/admin-empresa-detalhe/admin-empresa-detalhe';
+import { authGuard } from './core/auth.guard';
 
 export const routes: Routes = [
   {
@@ -16,5 +20,19 @@ export const routes: Routes = [
   {
     path: 'selos',
     component: Selos,
+  },
+  {
+    path: 'login',
+    component: Login,
+  },
+  // Área restrita (precisa de login)
+  {
+    path: 'admin',
+    canActivate: [authGuard],
+    children: [
+      { path: '', redirectTo: 'empresas', pathMatch: 'full' },
+      { path: 'empresas', component: AdminEmpresas },
+      { path: 'empresas/:id', component: AdminEmpresaDetalhe },
+    ],
   },
 ];

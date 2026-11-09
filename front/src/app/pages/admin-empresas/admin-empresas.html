@@ -1,0 +1,69 @@
+<main class="admin wrap">
+  <section class="admin__topo">
+    <div>
+      <h1 class="h-section">Empresas cadastradas</h1>
+      @if (auth.usuario(); as usuario) {
+      <p class="admin__usuario">
+        {{ usuario.username }} · {{ usuario.perfil }}
+      </p>
+      }
+    </div>
+    <button type="button" class="botao botao--secundario" (click)="auth.logout()">Sair</button>
+  </section>
+
+  <div class="admin__filtros">
+    <label class="filtro">
+      <input type="checkbox" [checked]="somenteVencidas()" (change)="alternarVencidas()" />
+      Só revalidação vencida
+    </label>
+    <span class="admin__total">{{ total() }} empresa(s)</span>
+  </div>
+
+  @if (erro()) {
+  <p class="admin__erro" role="alert">{{ erro() }}</p>
+  }
+
+  @if (carregando()) {
+  <p>Carregando...</p>
+  } @else if (empresas().length === 0 && !erro()) {
+  <p>Nenhuma empresa encontrada.</p>
+  } @else {
+  <table class="tabela">
+    <thead>
+      <tr>
+        <th>Razão social</th>
+        <th>CNPJ</th>
+        <th>Status</th>
+        <th>Próxima revalidação</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (empresa of empresas(); track empresa.id) {
+      <tr>
+        <td>{{ empresa.razao_social }}</td>
+        <td>{{ empresa.cnpj }}</td>
+        <td>
+          <span [class]="'status status--' + empresa.status">{{ rotuloStatus[empresa.status] }}</span>
+        </td>
+        <td>
+          {{ formatarData(empresa.data_proxima_revalidacao) }}
+          @if (empresa.revalidacao_vencida) {
+          <span class="vencida">Vencida</span>
+          }
+        </td>
+        <td><a [routerLink]="['/admin/empresas', empresa.id]">Gerenciar</a></td>
+      </tr>
+      }
+    </tbody>
+  </table>
+
+  <div class="paginacao">
+    <button type="button" class="botao botao--secundario" [disabled]="pagina() === 1"
+      (click)="carregar(pagina() - 1)">Anterior</button>
+    <span>Página {{ pagina() }}</span>
+    <button type="button" class="botao botao--secundario" [disabled]="!temProxima()"
+      (click)="carregar(pagina() + 1)">Próxima</button>
+  </div>
+  }
+</main>

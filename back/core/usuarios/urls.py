@@ -8,6 +8,8 @@ router = DefaultRouter()
 router.register("usuarios", UsuarioViewSet, basename="usuario")
 
 urlpatterns = [
+    # POST {"username", "password"} → {"token": "..."}
+    path("auth/login/", obtain_auth_token, name="auth-login"),
     path("auth/me/", MeView.as_view()),
     path("", include(router.urls)),
 ]

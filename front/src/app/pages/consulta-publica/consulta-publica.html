@@ -72,29 +72,56 @@
   }
 
   @if (!carregando() && empresas().length > 0) {
-  <h2>Empresas encontradas</h2>
+  <h2 class="resultados-titulo">Empresas encontradas</h2>
 
-  <ul>
+  <div class="empresas-grid">
     @for (empresa of empresas(); track empresa.id) {
-    <li>
-      {{ empresa.razao_social }}
+    <article class="empresa-card">
 
-      @if (empresa.selo) {
-      <span class="empresa-selo">
-        🏅 Selo {{ empresa.selo }}
-      </span>
-      }
-    </li>
+      <div class="empresa-imagem">
+        @if (empresa.foto) {
+        <img [src]="empresa.foto" [alt]="'Foto de ' + empresa.razao_social" />
+        } @else {
+        <span>🏢</span>
+        }
+      </div>
+
+      <div class="empresa-conteudo">
+        <h3>{{ empresa.razao_social }}</h3>
+
+        <div class="empresa-areas">
+          @for (area of empresa.areas; track area.id) {
+          <span class="empresa-area">{{ area.nome }}</span>
+          }
+        </div>
+
+        <p class="empresa-endereco">
+          📍 {{ empresa.endereco }}, {{ empresa.bairro }} —
+          {{ empresa.cidade }}
+        </p>
+
+        @if (empresa.selo) {
+        <span class="empresa-selo">
+          🏅 Selo {{ empresa.selo }}
+        </span>
+        } @else {
+        <span class="empresa-sem-selo">
+          Sem selo atribuído
+        </span>
+        }
+      </div>
+
+    </article>
     }
-  </ul>
+  </div>
   }
 
   @if (pesquisaRealizada() && !carregando() && !erro() && empresas().length === 0) {
-<p>
-  @if (areaSelecionada()) {
+  <p>
+    @if (areaSelecionada()) {
     Nenhuma empresa encontrada na categoria {{ areaSelecionada() }}.
-  } @else {
+    } @else {
     Nenhuma empresa encontrada para o nome pesquisado.
-  }
-</p>  }
+    }
+  </p> }
 </main>

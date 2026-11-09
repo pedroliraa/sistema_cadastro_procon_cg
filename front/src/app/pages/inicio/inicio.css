@@ -1,0 +1,128 @@
+.inicio-page {
+  width: 100%;
+  padding-top: 32px;
+}
+
+.hero {
+  width: calc(100% - 48px);
+  max-width: 1200px;
+  height: auto;
+  aspect-ratio: 1200 / 340;
+  min-height: 0;
+
+  margin: 0 auto;
+  padding: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  background-image: url('/assets/Hero.png');
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.hero-conteudo {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  text-align: center;
+}
+
+.hero h1 {
+  color: #ffffff;
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .hero {
+    min-height: 280px;
+    padding: 40px 20px;
+  }
+}
+.busca-inicial {
+  padding: 48px 24px 64px;
+  text-align: center;
+}
+
+.busca-inicial h2 {
+  color: #385bb5;
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 20px;
+}
+
+.busca-form {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  border: 1px solid #29324b;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.busca-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 20px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+}
+
+.busca-form input::placeholder {
+  color: #9baee5;
+}
+
+.busca-form button {
+  padding: 12px 20px;
+  border: none;
+  background: transparent;
+  color: #29324b;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.busca-form:focus-within {
+  outline: 2px solid #385bb5;
+  outline-offset: 2px;
+}
+
+.destaques {
+  width: calc(100% - 48px);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 0 64px;
+}
+
+.destaques h2 {
+  color: #1b2d50;
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 24px;
+}
+
+.destaques-vazio {
+  padding: 40px 24px;
+  border: 1px solid #dce3ef;
+  border-radius: 16px;
+  background-color: #ffffff;
+  color: #66758f;
+  text-align: center;
+  font-size: 16px;
+}
+
+@media (max-width: 600px) {
+  .destaques h2 {
+    font-size: 22px;
+  }
+
+  .destaques-vazio {
+    padding: 32px 16px;
+  }
+}

@@ -183,3 +183,10 @@ dd {
   font-size: 14px;
   color: #374151;
 }
+
+.selo-atual {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}

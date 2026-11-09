@@ -8,6 +8,7 @@ import {
   ROTULO_STATUS,
   formatarData,
 } from '../../core/empresa-admin.service';
+import { imagemDoSelo } from '../../core/selos';
 
 @Component({
   selector: 'app-admin-empresas',
@@ -26,6 +27,7 @@ export class AdminEmpresas implements OnInit {
   readonly somenteVencidas = signal(false);
   readonly carregando = signal(false);
   readonly erro = signal('');
+  readonly imagemDoSelo = imagemDoSelo;
 
   readonly rotuloStatus = ROTULO_STATUS;
   readonly formatarData = formatarData;

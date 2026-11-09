@@ -2,16 +2,20 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
+
 import { AuthService } from '../../core/auth.service';
 import {
   Empresa,
   EmpresaAdminService,
+  HistoricoSelo,
   HistoricoStatus,
+  NivelSelo,
   ROTULO_STATUS,
   StatusEmpresa,
   formatarData,
   mensagemDeErro,
 } from '../../core/empresa-admin.service';
+import { imagemDoSelo } from '../../core/selos';
 
 // Mesmas transições do back (empresas/services.py)
 const TRANSICOES: Record<StatusEmpresa, StatusEmpresa[]> = {
@@ -37,6 +41,9 @@ export class AdminEmpresaDetalhe implements OnInit {
   readonly salvando = signal(false);
   readonly erro = signal('');
   readonly sucesso = signal('');
+  readonly niveisSelo = signal<NivelSelo[]>([]);
+  readonly historicoSelo = signal<HistoricoSelo[]>([]);
+  readonly imagemDoSelo = imagemDoSelo;
 
   readonly rotuloStatus = ROTULO_STATUS;
   readonly formatarData = formatarData;
@@ -55,6 +62,9 @@ export class AdminEmpresaDetalhe implements OnInit {
 
   ngOnInit(): void {
     this.id = Number(this.route.snapshot.paramMap.get('id'));
+    this.service.listarNiveisSelo().subscribe({
+      next: (niveis) => this.niveisSelo.set(niveis),
+    });
     this.carregar();
   }
 
@@ -76,6 +86,38 @@ export class AdminEmpresaDetalhe implements OnInit {
   carregarHistorico(): void {
     this.service.historico(this.id).subscribe({
       next: (resposta) => this.historico.set(resposta.results),
+    });
+  }
+
+    carregarHistoricoSelo(): void {
+    this.service.historicoSelo(this.id).subscribe({
+      next: (resposta) => this.historicoSelo.set(resposta.results),
+    });
+  }
+
+  alterarSelo(nivelId: string, campoMotivo: HTMLTextAreaElement): void {
+    this.sucesso.set('');
+
+    if (!nivelId) {
+      this.erro.set('Escolha o novo selo.');
+      return;
+    }
+
+    this.salvando.set(true);
+    this.erro.set('');
+
+    this.service.alterarSelo(this.id, Number(nivelId), campoMotivo.value.trim()).subscribe({
+      next: (empresa) => {
+        this.empresa.set(empresa);
+        this.salvando.set(false);
+        this.sucesso.set(`Selo alterado para "${empresa.selo}".`);
+        campoMotivo.value = '';
+        this.carregarHistoricoSelo();
+      },
+      error: (erro) => {
+        this.salvando.set(false);
+        this.erro.set(mensagemDeErro(erro, 'Não foi possível alterar o selo.'));
+      },
     });
   }
 
@@ -108,6 +150,7 @@ export class AdminEmpresaDetalhe implements OnInit {
         this.sucesso.set(`Status alterado para "${ROTULO_STATUS[empresa.status]}".`);
         campoMotivo.value = '';
         this.carregarHistorico();
+        this.carregarHistoricoSelo();
       },
       error: (erro) => {
         this.salvando.set(false);

@@ -1,6 +1,8 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
+import { imagemDoSelo } from '../../core/selos';
+
 
 interface EmpresaPublica {
   id: number;
@@ -42,6 +44,7 @@ export class ConsultaPublica implements OnInit {
   readonly carregando = signal(false);
   readonly erro = signal('');
   readonly pesquisaRealizada = signal(false);
+  readonly imagemDoSelo = imagemDoSelo;
   readonly areaSelecionada = signal('');
 
   buscar(nome: string): void {

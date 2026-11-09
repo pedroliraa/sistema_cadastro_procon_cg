@@ -7,7 +7,7 @@ pelo comando de verificação de revalidações.
 from django.db import transaction
 from django.utils import timezone
 
-from .models import Empresa, HistoricoStatus, calcular_proxima_revalidacao
+from .models import Empresa, HistoricoSelo, HistoricoStatus, calcular_proxima_revalidacao
 from .signals import status_alterado
 
 # Transições permitidas a partir de cada status
@@ -114,3 +114,29 @@ def suspender_vencidas(usuario=None):
         empresa, _ = alterar_status(empresa, 'suspenso', motivo, usuario)
         suspensas.append(empresa)
     return suspensas
+
+class SeloInvalido(Exception):
+    """Troca de selo que a regra de negócio não permite."""
+
+
+def alterar_selo(empresa, nivel_selo, motivo='', usuario=None):
+    """Define manualmente o selo da empresa e grava no histórico."""
+    with transaction.atomic():
+        empresa = Empresa.objects.select_for_update().get(pk=empresa.pk)
+        selo_anterior = empresa.nivel_selo_atual
+
+        if selo_anterior and selo_anterior.pk == nivel_selo.pk:
+            raise SeloInvalido(f'A empresa já possui o selo "{nivel_selo.nome}".')
+
+        empresa.nivel_selo_atual = nivel_selo
+        empresa.save(update_fields=['nivel_selo_atual'])
+
+        historico = HistoricoSelo.objects.create(
+            empresa=empresa,
+            nivel_selo=nivel_selo,
+            selo_anterior=selo_anterior,
+            motivo=(motivo or '').strip(),
+            usuario=usuario,
+        )
+
+    return empresa, historico

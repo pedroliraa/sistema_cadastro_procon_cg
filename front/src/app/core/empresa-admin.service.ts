@@ -18,6 +18,7 @@ export interface Empresa {
   foto: string | null;
   areas: number[];
   nivel_selo_atual: number | null;
+  selo: string | null;
   status: StatusEmpresa;
   data_ultima_validacao: string | null;
   data_proxima_revalidacao: string | null;
@@ -45,6 +46,21 @@ export interface HistoricoStatus {
   tipo: 'alteracao' | 'revalidacao';
   status_anterior: StatusEmpresa;
   status_novo: StatusEmpresa;
+  motivo: string;
+  usuario: string | null;
+  data_alteracao: string;
+}
+
+export interface NivelSelo {
+  id: number;
+  nome: string;
+  descricao: string;
+}
+
+export interface HistoricoSelo {
+  id: number;
+  nivel_selo: string;
+  selo_anterior: string | null;
   motivo: string;
   usuario: string | null;
   data_alteracao: string;
@@ -123,5 +139,18 @@ export class EmpresaAdminService {
 
   historico(id: number): Observable<Paginado<HistoricoStatus>> {
     return this.http.get<Paginado<HistoricoStatus>>(`${this.url}/${id}/historico-status/`);
+  }
+
+    // Selo
+  listarNiveisSelo(): Observable<NivelSelo[]> {
+    return this.http.get<NivelSelo[]>(`${API_URL}/niveis-selo/`);
+  }
+
+  alterarSelo(id: number, nivel_selo: number, motivo = ''): Observable<Empresa> {
+    return this.http.post<Empresa>(`${this.url}/${id}/alterar-selo/`, { nivel_selo, motivo });
+  }
+
+  historicoSelo(id: number): Observable<Paginado<HistoricoSelo>> {
+    return this.http.get<Paginado<HistoricoSelo>>(`${this.url}/${id}/historico-selo/`);
   }
 }

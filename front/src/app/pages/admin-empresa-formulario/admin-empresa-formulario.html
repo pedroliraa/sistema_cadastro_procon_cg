@@ -57,6 +57,16 @@
             </small>
         </div>
 
+        <div class="campo">
+            <label for="nivel_selo">Selo (opcional)</label>
+            <select id="nivel_selo" formControlName="nivel_selo">
+                <option [ngValue]="null">Sem selo</option>
+                @for (nivel of niveisSelo(); track nivel.id) {
+                <option [ngValue]="nivel.id">{{ nivel.nome }}</option>
+                }
+            </select>
+        </div>
+
         <div class="campo-foto">
             <label for="foto">Foto ou logotipo da empresa</label>
 

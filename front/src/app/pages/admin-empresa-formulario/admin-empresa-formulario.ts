@@ -1,6 +1,11 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AreaAtuacao, EmpresaAdminService, mensagemDeErro } from '../../core/empresa-admin.service';
+import {
+  AreaAtuacao,
+  EmpresaAdminService,
+  NivelSelo,
+  mensagemDeErro,
+} from '../../core/empresa-admin.service';
 import { finalize } from 'rxjs';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
@@ -17,6 +22,7 @@ export class AdminEmpresaFormulario implements OnInit {
   readonly empresaId = Number(this.route.snapshot.paramMap.get('id')) || null;
   readonly fotoSelecionada = signal<File | null>(null);
   readonly fotoPreview = signal<string | null>(null);
+  readonly niveisSelo = signal<NivelSelo[]>([]);
 
   selecionarFoto(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -76,6 +82,10 @@ export class AdminEmpresaFormulario implements OnInit {
       dados.append('areas', String(areaId));
     });
 
+    if (valores.nivel_selo !== null) {
+      dados.append('nivel_selo', String(valores.nivel_selo));
+    }
+
     const foto = this.fotoSelecionada();
 
     if (foto) {
@@ -129,6 +139,12 @@ export class AdminEmpresaFormulario implements OnInit {
       error: () => {
         console.error('Não foi possível carregar as áreas de atuação.');
       },
+
+    });
+
+    this.empresaService.listarNiveisSelo().subscribe({
+      next: (niveis) => this.niveisSelo.set(niveis),
+      error: () => console.error('Não foi possível carregar os selos.'),
     });
 
     if (this.empresaId !== null) {
@@ -143,6 +159,7 @@ export class AdminEmpresaFormulario implements OnInit {
             telefone: empresa.telefone,
             email: empresa.email,
             areas: empresa.areas,
+            nivel_selo: empresa.nivel_selo_atual,
           });
           if (empresa.foto) {
             this.fotoPreview.set(empresa.foto);
@@ -167,6 +184,7 @@ export class AdminEmpresaFormulario implements OnInit {
     telefone: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
     areas: this.fb.nonNullable.control<number[]>([], Validators.required),
+    nivel_selo: this.fb.control<number | null>(null),
   });
 }
 

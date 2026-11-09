@@ -8,13 +8,16 @@ from rest_framework.response import Response
 from usuarios.permissions import IsAnalistaOuGestor, IsGestor
 
 from . import services
-from .models import AreaAtuacao, Empresa
+from .models import AreaAtuacao, Empresa, NivelSelo
 from .serializers import (
-    AreaAtuacaoSerializer,
+    AlterarSeloSerializer,
     AlterarStatusSerializer,
+    AreaAtuacaoSerializer,
     EmpresaPublicaSerializer,
     EmpresaSerializer,
+    HistoricoSeloSerializer,
     HistoricoStatusSerializer,
+    NivelSeloSerializer,
     RevalidarSerializer,
 )
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
@@ -29,14 +32,21 @@ class AreaAtuacaoViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAnalistaOuGestor]
     pagination_class = None
 
-    
+class NivelSeloViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = NivelSelo.objects.order_by('id')
+    serializer_class = NivelSeloSerializer
+    permission_classes = [IsAnalistaOuGestor]
+    pagination_class = None
+
 class EmpresaViewSet(viewsets.ModelViewSet):
     parser_classes = [JSONParser, MultiPartParser, FormParser]
-    queryset = Empresa.objects.prefetch_related('areas')
+    queryset = Empresa.objects.select_related('nivel_selo_atual').prefetch_related('areas')
     serializer_class = EmpresaSerializer
     pagination_class = EmpresaPagination
 
     def get_permissions(self):
+        if self.action == 'alterar_selo':
+            return [IsGestor()]
         # só o gestor pode excluir
         if self.action == 'destroy':
             return [IsGestor()]
@@ -98,6 +108,38 @@ class EmpresaViewSet(viewsets.ModelViewSet):
         historico = empresa.historico_status.select_related('usuario')
         pagina = self.paginate_queryset(historico)
         serializer = HistoricoStatusSerializer(pagina, many=True)
+        return self.get_paginated_response(serializer.data)
+
+    @action(detail=True, methods=['post'], url_path='alterar-selo')
+    def alterar_selo(self, request, pk=None):
+        """Define manualmente o selo da empresa.
+
+        Body: {"nivel_selo": <id>, "motivo": "..."}  (motivo é opcional)
+        """
+        empresa = self.get_object()
+        entrada = AlterarSeloSerializer(data=request.data)
+        entrada.is_valid(raise_exception=True)
+
+        try:
+            empresa, _ = services.alterar_selo(
+                empresa,
+                entrada.validated_data['nivel_selo'],
+                entrada.validated_data['motivo'],
+                request.user,
+            )
+        except services.SeloInvalido as erro:
+            raise ValidationError({'nivel_selo': [str(erro)]})
+
+        return Response(self.get_serializer(empresa).data)
+
+    @action(detail=True, methods=['get'], url_path='historico-selo')
+    def historico_selo(self, request, pk=None):
+        empresa = self.get_object()
+        historico = empresa.historico_selos.select_related(
+            'nivel_selo', 'selo_anterior', 'usuario'
+        )
+        pagina = self.paginate_queryset(historico)
+        serializer = HistoricoSeloSerializer(pagina, many=True)
         return self.get_paginated_response(serializer.data)
 
     @action(detail=False, methods=['get'], url_path='revalidacoes-vencidas')

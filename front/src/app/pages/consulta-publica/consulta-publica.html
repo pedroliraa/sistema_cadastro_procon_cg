@@ -102,12 +102,13 @@
 
         @if (empresa.selo) {
         <span class="empresa-selo">
-          🏅 Selo {{ empresa.selo }}
+          @if (imagemDoSelo(empresa.selo); as imagem) {
+          <img [src]="imagem" [alt]="'Selo ' + empresa.selo" width="28" height="28" />
+          }
+          Selo {{ empresa.selo }}
         </span>
         } @else {
-        <span class="empresa-sem-selo">
-          Sem selo atribuído
-        </span>
+        <span class="empresa-sem-selo">Sem selo atribuído</span>
         }
       </div>
 

@@ -212,11 +212,16 @@ class EmpresaBuscaPublicaTests(APITestCase):
             'Mercadinho Boa Compra LTDA'
         )
 
-    def test_busca_sem_nome_retorna_lista_vazia(self):
+    def test_busca_sem_nome_retorna_empresas_ativas(self):
         resposta = self.client.get(self.url)
 
         self.assertEqual(resposta.status_code, status.HTTP_200_OK)
-        self.assertEqual(resposta.data['count'], 0)
+        self.assertEqual(resposta.data['count'], 1)
+
+        self.assertEqual(
+            resposta.data['results'][0]['razao_social'],
+            'Mercadinho Boa Compra LTDA'
+        )
 
     def test_nao_expoe_dados_privados(self):
         resposta = self.client.get(self.url, {'nome': 'mercadinho'})

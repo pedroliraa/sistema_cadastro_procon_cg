@@ -1,5 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 interface EmpresaPublica {
   id: number;
@@ -18,8 +19,16 @@ interface RespostaEmpresas {
   templateUrl: './consulta-publica.html',
   styleUrl: './consulta-publica.css',
 })
-export class ConsultaPublica {
+export class ConsultaPublica implements OnInit {
   private readonly http = inject(HttpClient);
+  readonly route = inject(ActivatedRoute);
+  ngOnInit(): void {
+    const nome = this.route.snapshot.queryParamMap.get('nome');
+
+    if (nome) {
+      this.buscar(nome);
+    }
+  }
 
   readonly empresas = signal<EmpresaPublica[]>([]);
   readonly carregando = signal(false);

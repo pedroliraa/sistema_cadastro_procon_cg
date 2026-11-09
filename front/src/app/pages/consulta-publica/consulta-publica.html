@@ -8,8 +8,8 @@
       <label for="nome" class="sr-only">Nome da empresa</label>
 
       <div class="field">
-        <input #nome id="nome" type="search" name="nome" placeholder="Pesquise uma empresa ou categoria" />
-
+        <input #nome id="nome" type="search" name="nome" placeholder="Pesquise uma empresa ou categoria"
+          [value]="route.snapshot.queryParamMap.get('nome') ?? ''" />
         <button type="submit" [disabled]="carregando()" aria-label="Buscar empresas" class="search-button">
           @if (carregando()) {
           <span>Buscando...</span>

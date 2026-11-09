@@ -1,0 +1,34 @@
+
+<main class="inicio-page">
+  <section
+    class="hero"
+    id="inicio"
+    role="img"
+    aria-label="Você conhece os seus direitos de consumidor?"
+  ></section>
+
+  <section class="busca-inicial" aria-labelledby="titulo-busca">
+    <h2 id="titulo-busca">Procure Empresas</h2>
+
+    <form class="busca-form" (submit)="pesquisar($event)">
+      <input
+        type="search"
+        name="empresa"
+        placeholder="Pesquise aqui"
+        aria-label="Pesquisar empresas"
+      />
+
+      <button type="submit" aria-label="Buscar empresas">
+        &#9906;
+      </button>
+    </form>
+  </section>
+
+  <section class="destaques" aria-labelledby="titulo-destaques">
+    <h2 id="titulo-destaques">Empresas em destaque</h2>
+
+    <p class="destaques-vazio">
+      Em breve, você poderá conhecer as empresas em destaque no ProSelo.
+    </p>
+  </section>
+</main>

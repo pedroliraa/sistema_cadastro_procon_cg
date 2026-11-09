@@ -5,6 +5,14 @@ import { ActivatedRoute } from '@angular/router';
 interface EmpresaPublica {
   id: number;
   razao_social: string;
+  foto: string | null;
+  endereco: string;
+  bairro: string;
+  cidade: string;
+  areas: {
+    id: number;
+    nome: string;
+  }[];
   selo: string | null;
 }
 

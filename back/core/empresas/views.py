@@ -113,20 +113,24 @@ class EmpresaViewSet(viewsets.ModelViewSet):
         return self.get_paginated_response(serializer.data)
 
 
+
 class EmpresaBuscaPublicaView(generics.ListAPIView):
     serializer_class = EmpresaPublicaSerializer
     permission_classes = [AllowAny]
     pagination_class = EmpresaPagination
 
+    queryset = (
+        Empresa.objects
+        .filter(status='ativo')
+        .select_related('nivel_selo_atual')
+        .prefetch_related('areas')
+    )
+
     def get_queryset(self):
         nome = self.request.query_params.get('nome', '').strip()
         area = self.request.query_params.get('area', '').strip()
 
-        if not nome and not area:
-            return Empresa.objects.none()
-
-        # suspensas e removidas não aparecem na consulta pública
-        empresas = Empresa.objects.filter(status='ativo')
+        empresas = self.queryset
 
         if nome:
             empresas = empresas.filter(

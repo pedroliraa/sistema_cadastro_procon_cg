@@ -111,3 +111,93 @@
 .page-head {
   margin-bottom: 32px;
 }
+/* Resultados da consulta pública */
+
+.resultados-titulo {
+  margin: 32px 0 20px;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.empresas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.empresa-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.empresa-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.empresa-imagem {
+  height: 180px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empresa-imagem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.empresa-imagem span {
+  font-size: 3rem;
+}
+
+.empresa-conteudo {
+  padding: 20px;
+}
+
+.empresa-conteudo h3 {
+  margin: 0 0 12px;
+  font-size: 1.15rem;
+  color: #1e293b;
+}
+
+.empresa-areas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.empresa-area {
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: #eaf0ff;
+  color: #3154a5;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.empresa-endereco {
+  color: #64748b;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.empresa-selo {
+  display: inline-block;
+  color: #8a6500;
+  font-weight: 700;
+}
+
+.empresa-sem-selo {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}

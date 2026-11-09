@@ -1,22 +1,11 @@
-
 <main class="inicio-page">
-  <section
-    class="hero"
-    id="inicio"
-    role="img"
-    aria-label="Você conhece os seus direitos de consumidor?"
-  ></section>
+  <section class="hero" id="inicio" role="img" aria-label="Você conhece os seus direitos de consumidor?"></section>
 
   <section class="busca-inicial" aria-labelledby="titulo-busca">
     <h2 id="titulo-busca">Procure Empresas</h2>
 
     <form class="busca-form" (submit)="pesquisar($event)">
-      <input
-        type="search"
-        name="empresa"
-        placeholder="Pesquise aqui"
-        aria-label="Pesquisar empresas"
-      />
+      <input type="search" name="empresa" placeholder="Pesquise aqui" aria-label="Pesquisar empresas" />
 
       <button type="submit" aria-label="Buscar empresas">
         &#9906;
@@ -27,8 +16,46 @@
   <section class="destaques" aria-labelledby="titulo-destaques">
     <h2 id="titulo-destaques">Empresas em destaque</h2>
 
+    @if (empresasDestaque().length > 0) {
+    <div class="destaques-grid">
+      @for (empresa of empresasDestaque(); track empresa.id) {
+      <article class="destaque-card">
+
+        <div class="destaque-imagem">
+          @if (empresa.foto) {
+          <img [src]="empresa.foto" [alt]="'Foto de ' + empresa.razao_social" />
+          } @else {
+          <span>🏢</span>
+          }
+        </div>
+
+        <div class="destaque-conteudo">
+          <h3>{{ empresa.razao_social }}</h3>
+
+          <div class="destaque-areas">
+            @for (area of empresa.areas; track area.id) {
+            <span class="destaque-area">{{ area.nome }}</span>
+            }
+          </div>
+
+          @if (empresa.selo) {
+          <span class="destaque-selo">
+            🏅 Selo {{ empresa.selo }}
+          </span>
+          } @else {
+          <span class="destaque-sem-selo">
+            Sem selo atribuído
+          </span>
+          }
+        </div>
+
+      </article>
+      }
+    </div>
+    } @else {
     <p class="destaques-vazio">
-      Em breve, você poderá conhecer as empresas em destaque no ProSelo.
+      Nenhuma empresa disponível para exibição no momento.
     </p>
+    }
   </section>
 </main>

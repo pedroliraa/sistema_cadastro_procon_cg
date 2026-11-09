@@ -1,7 +1,12 @@
 from rest_framework import serializers
 
-from .models import Empresa, HistoricoStatus
+from .models import AreaAtuacao, Empresa, HistoricoStatus
 
+class AreaAtuacaoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AreaAtuacao
+        fields = ['id', 'nome']
+        read_only_fields = fields
 
 class EmpresaSerializer(serializers.ModelSerializer):
     revalidacao_vencida = serializers.BooleanField(read_only=True)
@@ -11,7 +16,7 @@ class EmpresaSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'razao_social', 'cnpj',
             'endereco', 'bairro', 'cidade',
-            'telefone', 'email',
+            'telefone', 'email', 'foto',
             'areas', 'nivel_selo_atual', 'status',
             'data_ultima_validacao', 'data_proxima_revalidacao',
             'revalidacao_vencida',

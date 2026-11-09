@@ -8,22 +8,30 @@ from rest_framework.response import Response
 from usuarios.permissions import IsAnalistaOuGestor, IsGestor
 
 from . import services
-from .models import Empresa
+from .models import AreaAtuacao, Empresa
 from .serializers import (
+    AreaAtuacaoSerializer,
     AlterarStatusSerializer,
     EmpresaPublicaSerializer,
     EmpresaSerializer,
     HistoricoStatusSerializer,
     RevalidarSerializer,
 )
-
+from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 
 class EmpresaPagination(PageNumberPagination):
 
     page_size = 20
 
+class AreaAtuacaoViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = AreaAtuacao.objects.all()
+    serializer_class = AreaAtuacaoSerializer
+    permission_classes = [IsAnalistaOuGestor]
+    pagination_class = None
 
+    
 class EmpresaViewSet(viewsets.ModelViewSet):
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
     queryset = Empresa.objects.prefetch_related('areas')
     serializer_class = EmpresaSerializer
     pagination_class = EmpresaPagination

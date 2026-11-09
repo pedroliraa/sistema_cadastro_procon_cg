@@ -15,6 +15,7 @@ export interface Empresa {
   cidade: string;
   telefone: string;
   email: string;
+  foto: string | null;
   areas: number[];
   nivel_selo_atual: number | null;
   status: StatusEmpresa;
@@ -23,6 +24,22 @@ export interface Empresa {
   revalidacao_vencida: boolean;
 }
 
+export interface AreaAtuacao {
+  id: number;
+  nome: string;
+}
+
+export type DadosEmpresa = Pick<
+  Empresa,
+  | 'razao_social'
+  | 'cnpj'
+  | 'endereco'
+  | 'bairro'
+  | 'cidade'
+  | 'telefone'
+  | 'email'
+  | 'areas'
+>;
 export interface HistoricoStatus {
   id: number;
   tipo: 'alteracao' | 'revalidacao';
@@ -74,6 +91,10 @@ export class EmpresaAdminService {
     });
   }
 
+  listarAreas(): Observable<AreaAtuacao[]> {
+    return this.http.get<AreaAtuacao[]>(`${API_URL}/areas/`);
+  }
+
   listarRevalidacoesVencidas(pagina = 1): Observable<Paginado<Empresa>> {
     return this.http.get<Paginado<Empresa>>(`${this.url}/revalidacoes-vencidas/`, {
       params: { page: pagina },
@@ -82,6 +103,13 @@ export class EmpresaAdminService {
 
   obter(id: number): Observable<Empresa> {
     return this.http.get<Empresa>(`${this.url}/${id}/`);
+  }
+  cadastrar(dados: FormData): Observable<Empresa> {
+    return this.http.post<Empresa>(`${this.url}/`, dados);
+  }
+
+  editar(id: number, dados: FormData): Observable<Empresa> {
+    return this.http.patch<Empresa>(`${this.url}/${id}/`, dados);
   }
 
   // PB-11

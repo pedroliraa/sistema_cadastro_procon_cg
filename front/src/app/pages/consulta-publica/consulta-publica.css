@@ -103,3 +103,11 @@
   justify-content: center;
   gap: 8px;
 }
+
+.consulta-publica {
+  padding-top: 40px;
+}
+
+.page-head {
+  margin-bottom: 32px;
+}

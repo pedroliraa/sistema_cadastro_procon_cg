@@ -110,3 +110,12 @@
   object-fit: cover;
   border: 1px solid #ddd;
 }
+
+select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #c9d6e2;
+  border-radius: 12px;
+  background: #fff;
+  font: inherit;
+}

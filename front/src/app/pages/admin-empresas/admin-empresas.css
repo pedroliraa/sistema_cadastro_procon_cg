@@ -132,3 +132,9 @@
 .botao-cadastrar:hover {
   background-color: #2d4892;
 }
+
+.selo-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}

@@ -201,3 +201,9 @@
   color: #94a3b8;
   font-size: 0.85rem;
 }
+
+.empresa-selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}

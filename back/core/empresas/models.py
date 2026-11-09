@@ -134,8 +134,29 @@ class HistoricoSelo(models.Model):
         related_name='historicos'
     )
 
+    selo_anterior = models.ForeignKey(
+        NivelSelo,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='+'
+    )
+
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='alteracoes_selo_empresa'
+    )
+
     data_alteracao = models.DateTimeField(auto_now_add=True)
     motivo = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = 'Histórico de selo'
+        verbose_name_plural = 'Históricos de selo'
+        ordering = ['-data_alteracao', '-id']
 
     def __str__(self):
         return f'{self.empresa} - {self.nivel_selo}'

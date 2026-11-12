@@ -45,7 +45,7 @@
       @for (empresa of empresas(); track empresa.id) {
       <tr>
         <td>{{ empresa.razao_social }}</td>
-        <td>{{ empresa.cnpj }}</td>
+        <td>{{ formatarCnpj(empresa.cnpj) }}</td>
                 <td>
           <span [class]="'status status--' + empresa.status">{{ rotuloStatus[empresa.status] }}</span>
         </td>

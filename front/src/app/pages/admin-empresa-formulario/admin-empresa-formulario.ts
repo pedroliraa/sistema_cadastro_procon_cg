@@ -6,6 +6,9 @@ import {
   NivelSelo,
   mensagemDeErro,
 } from '../../core/empresa-admin.service';
+import {
+  formatarCnpj, formatarTelefone, limparCnpj, limparTelefone,
+} from '../../core/mascaras';
 import { finalize } from 'rxjs';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
@@ -61,11 +64,23 @@ export class AdminEmpresaFormulario implements OnInit {
     this.formulario.controls.areas.setValue(areasSelecionadas);
   }
 
+  mascararCnpj(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.formulario.controls.cnpj.setValue(formatarCnpj(input.value));
+  }
+
+  mascararTelefone(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.formulario.controls.telefone.setValue(formatarTelefone(input.value));
+  }
+
   salvarEmpresa(): void {
     if (this.formulario.invalid) {
       this.formulario.markAllAsTouched();
       return;
     }
+
+
 
     const valores = this.formulario.getRawValue();
     const dados = new FormData();

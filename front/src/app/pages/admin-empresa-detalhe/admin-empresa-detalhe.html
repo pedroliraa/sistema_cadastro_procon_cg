@@ -32,6 +32,12 @@
         <dd>{{ empresa.telefone }}</dd>
         <dt>E-mail</dt>
         <dd>{{ empresa.email }}</dd>
+        <dt>CNPJ</dt>
+        <dd>{{ formatarCnpj(empresa.cnpj) }}</dd>
+        <dt>Endereço</dt>
+        <dd>{{ empresa.endereco }} — {{ empresa.bairro }}, {{ empresa.cidade }}</dd>
+        <dt>Telefone</dt>
+        <dd>{{ formatarTelefone(empresa.telefone) }}</dd>
       </dl>
     </section>
 
@@ -88,33 +94,32 @@
     </section>
   </div>
 
-      <!-- Selo -->
-    <section class="cartao">
-      <h2>Selo</h2>
+  <!-- Selo -->
+  <section class="cartao">
+    <h2>Selo</h2>
 
-      <div class="selo-atual">
-        @if (imagemDoSelo(empresa.selo); as imagem) {
-        <img [src]="imagem" [alt]="'Selo ' + empresa.selo" width="72" height="72" />
+    <div class="selo-atual">
+      @if (imagemDoSelo(empresa.selo); as imagem) {
+      <img [src]="imagem" [alt]="'Selo ' + empresa.selo" width="72" height="72" />
+      }
+      <strong>{{ empresa.selo ? 'Selo ' + empresa.selo : 'Sem selo atribuído' }}</strong>
+    </div>
+
+    <form class="formulario" (submit)="$event.preventDefault(); alterarSelo(novoSelo.value, motivoSelo)">
+      <label for="novo-selo">Novo selo</label>
+      <select #novoSelo id="novo-selo">
+        <option value="">Selecione...</option>
+        @for (nivel of niveisSelo(); track nivel.id) {
+        <option [value]="nivel.id" [disabled]="nivel.nome === empresa.selo">{{ nivel.nome }}</option>
         }
-        <strong>{{ empresa.selo ? 'Selo ' + empresa.selo : 'Sem selo atribuído' }}</strong>
-      </div>
+      </select>
 
-      <form class="formulario" (submit)="$event.preventDefault(); alterarSelo(novoSelo.value, motivoSelo)">
-        <label for="novo-selo">Novo selo</label>
-        <select #novoSelo id="novo-selo">
-          <option value="">Selecione...</option>
-          @for (nivel of niveisSelo(); track nivel.id) {
-          <option [value]="nivel.id" [disabled]="nivel.nome === empresa.selo">{{ nivel.nome }}</option>
-          }
-        </select>
+      <label for="motivo-selo">Motivo (opcional)</label>
+      <textarea #motivoSelo id="motivo-selo" rows="3" placeholder="Ex.: atendeu aos critérios da avaliação"></textarea>
 
-        <label for="motivo-selo">Motivo (opcional)</label>
-        <textarea #motivoSelo id="motivo-selo" rows="3"
-          placeholder="Ex.: atendeu aos critérios da avaliação"></textarea>
-
-        <button type="submit" class="botao" [disabled]="salvando()">Salvar selo</button>
-      </form>
-    </section>
+      <button type="submit" class="botao" [disabled]="salvando()">Salvar selo</button>
+    </form>
+  </section>
 
   <!-- PB-11: histórico -->
   <section class="cartao">
@@ -146,7 +151,7 @@
     }
   </section>
 
-    <section class="cartao">
+  <section class="cartao">
     <h2>Histórico de selos</h2>
 
     @if (historicoSelo().length === 0) {

@@ -14,7 +14,8 @@
 
         <div>
             <label for="cnpj">CNPJ</label>
-            <input id="cnpj" type="text" formControlName="cnpj" maxlength="14" placeholder="Somente números" required />
+            <input formControlName="cnpj" (input)="mascararCnpj($event)" placeholder="00.000.000/0000-00" maxlength="18"
+                autocomplete="off" />
         </div>
 
         <div>
@@ -34,8 +35,8 @@
 
         <div>
             <label for="telefone">Telefone</label>
-            <input id="telefone" type="tel" formControlName="telefone" maxlength="11" placeholder="DDD + número"
-                required />
+            <input formControlName="telefone" (input)="mascararTelefone($event)" placeholder="(00) 00000-0000"
+                maxlength="15" inputmode="tel" />
         </div>
 
         <div>

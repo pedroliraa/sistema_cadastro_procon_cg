@@ -15,6 +15,7 @@ import {
   formatarData,
   mensagemDeErro,
 } from '../../core/empresa-admin.service';
+import { formatarCnpj, formatarTelefone } from '../../core/mascaras';
 import { imagemDoSelo } from '../../core/selos';
 
 // Mesmas transições do back (empresas/services.py)
@@ -43,6 +44,8 @@ export class AdminEmpresaDetalhe implements OnInit {
   readonly sucesso = signal('');
   readonly niveisSelo = signal<NivelSelo[]>([]);
   readonly historicoSelo = signal<HistoricoSelo[]>([]);
+  readonly formatarCnpj = formatarCnpj;
+  readonly formatarTelefone = formatarTelefone;
   readonly imagemDoSelo = imagemDoSelo;
 
   readonly rotuloStatus = ROTULO_STATUS;

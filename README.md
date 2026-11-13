@@ -1,62 +1,68 @@
-# Sistema de Cadastro PROCON - Backend
+# Sistema de Cadastro PROCON-CG (ProSelo)
 
-Backend do sistema de cadastro, desenvolvido em Django + Django REST Framework.
+Sistema de cadastro de empresas e atribuição de selos de qualidade, com consulta pública e área restrita para a equipe do PROCON-CG / UNIFACISA.
+
+- **back/**: API em Django + Django REST Framework
+- **front/**: aplicação em Angular
 
 ## Stack
 
-- Python 3
-- Django
-- Django REST Framework
+**Back-end**
+- Python 3.12+
+- Django 6 e Django REST Framework
+- PostgreSQL (psycopg2)
 - python-decouple (variáveis de ambiente)
-- django-cors-headers (CORS para o frontend Angular)
+- django-cors-headers (CORS para o front)
+- drf-spectacular (documentação da API)
+- Pillow (upload de fotos das empresas)
+
+**Front-end**
+- Angular 21 (standalone components, signals, SSR habilitado)
+- Tailwind CSS 4
+- TypeScript
+- Vitest (testes)
 
 ## Requisitos
 
-- Python 3.10+ instalado
 - Git
+- Python 3.12 ou superior
+- PostgreSQL
+- Node.js 20.19+ (ou 22.12+) e npm
+- Angular CLI: `npm install -g @angular/cli`
 
 ## Como iniciar o projeto (primeira vez)
 
-1. **Clonar o repositório**
+1. **Clonar o repositório e trocar para a develop**
 
    ```bash
    git clone https://github.com/pedroliraa/sistema_cadastro_procon_cg.git
    cd sistema_cadastro_procon_cg
-   ```
-
-2. **Trocar para a branch develop**
-
-   ```bash
    git checkout develop
    ```
 
-   > Todo o trabalho novo deve ser feito em branches `feature/*` criadas a partir da `develop`, nunca direto na `main`.
+   > Todo trabalho novo é feito em branches `feature/*` criadas a partir da `develop`, nunca direto na `main`.
 
-3. **Criar o ambiente virtual**
+### Back-end
+
+2. **Criar e ativar o ambiente virtual**
 
    ```bash
+   cd back
    python -m venv venv
    ```
 
-4. **Ativar o ambiente virtual**
-   - Windows (PowerShell):
-     ```powershell
-     venv\Scripts\activate
-     ```
-   - Mac/Linux:
-     ```bash
-     source venv/bin/activate
-     ```
+   - Windows (PowerShell): `venv\Scripts\activate`
+   - Mac/Linux: `source venv/bin/activate`
 
-5. **Instalar as dependências**
+3. **Instalar as dependências**
 
    ```bash
    pip install -r requirements.txt
    ```
 
-6. **Criar o arquivo `.env`**
+4. **Criar o banco no PostgreSQL** (ex.: `procon_cg`)
 
-   Crie um arquivo `.env` na raiz do projeto (esse arquivo NUNCA deve ser commitado) com o seguinte conteúdo, ajustando para os seus dados locais:
+5. **Criar o arquivo `.env`** em `back/core/` (nunca commitar):
 
    ```env
    SECRET_KEY=troque-por-uma-chave-secreta
@@ -68,39 +74,110 @@ Backend do sistema de cadastro, desenvolvido em Django + Django REST Framework.
    DB_PORT=5432
    ```
 
-7. **Rodar o servidor**
+6. **Aplicar as migrations e rodar o servidor**
 
    ```bash
+   cd core
+   python manage.py migrate
    python manage.py runserver
    ```
 
-   O backend estará disponível em `http://127.0.0.1:8000/`.
+   A API fica em `http://127.0.0.1:8000/api/`.
+   As migrations já criam os 4 níveis de selo (Qualificado, Confiável, Excelência e Referência).
+
+7. **(Opcional) Dados de exemplo para desenvolvimento**
+
+   ```bash
+   python seed_dev.py
+   ```
+
+### Front-end
+
+8. **Instalar as dependências e rodar**
+
+   ```bash
+   cd front
+   npm install --legacy-peer-deps
+   npx ng serve
+   ```
+
+   O front fica em `http://localhost:4200/`.
+
+   > `--legacy-peer-deps` evita um bug conhecido de resolução de peer dependencies em algumas versões do npm.
+
+   > O endereço da API está em `front/src/app/core/api.ts` (`API_URL`). Para o deploy, basta trocar ali.
+
+## Funcionalidades
+
+**Consulta pública** (sem login)
+- Início com busca e empresas em destaque
+- Explorar: busca por nome, filtro por categoria e filtro por selo
+- Página de Selos, com atalho para as empresas de cada selo
+
+**Área restrita** (login de Analista ou Gestor)
+- Lista de empresas com CNPJ mascarado, status, selo e próxima revalidação
+- Cadastro e edição de empresas, com foto, áreas de atuação e selo
+- Alteração manual de selo, com histórico (quem, quando, selo anterior e motivo)
+- Alteração de status (ativo, suspenso, removido) com histórico; remoção apenas pelo Gestor
+- Revalidação periódica e lista de revalidações vencidas
+
+## Principais endpoints
+
+| Método | Rota | Uso |
+|---|---|---|
+| GET | `/api/publico/empresas/?nome=&area=&selo=` | Consulta pública (só empresas ativas) |
+| POST | `/api/auth/login/` | Login |
+| GET | `/api/auth/me/` | Dados do usuário logado |
+| GET/POST | `/api/empresas/` | Listar e cadastrar |
+| GET/PATCH | `/api/empresas/<id>/` | Detalhe e edição |
+| POST | `/api/empresas/<id>/alterar-status/` | Alterar status |
+| POST | `/api/empresas/<id>/alterar-selo/` | Alterar selo |
+| POST | `/api/empresas/<id>/revalidar/` | Registrar revalidação |
+| GET | `/api/empresas/<id>/historico-status/` | Histórico de status |
+| GET | `/api/empresas/<id>/historico-selo/` | Histórico de selos |
+| GET | `/api/empresas/revalidacoes-vencidas/` | Revalidações vencidas |
+| GET | `/api/areas/` e `/api/niveis-selo/` | Áreas de atuação e níveis de selo |
+
+## Estrutura
+
+```
+back/core/
+  core/        configurações (settings, urls)
+  empresas/    empresas, selos, status e revalidação
+  usuarios/    usuários, perfis e permissões
+front/src/app/
+  core/        serviços, máscaras, selos e guard de autenticação
+  pages/       inicio, consulta-publica, selos, login e telas admin-*
+```
 
 ## Fluxo de trabalho (GitFlow)
 
-- `main` → código estável/em produção.
-- `develop` → branch de integração, onde as features se juntam.
-- `feature/nome-da-funcionalidade` → criada a partir da `develop` para cada nova funcionalidade.
-
-Para começar uma nova funcionalidade:
+- `main`: código estável / produção
+- `develop`: integração das features
+- `feature/nome-da-funcionalidade`: criada a partir da `develop`
 
 ```bash
-git checkout develop
+git switch develop
 git pull
-git checkout -b feature/nome-da-funcionalidade
+git switch -c feature/nome-da-funcionalidade
 ```
 
-Ao terminar, abra um Pull Request de `feature/nome-da-funcionalidade` para `develop` (nunca direto para `main`).
+Ao terminar, abra um Pull Request de `feature/...` para `develop` (nunca direto para `main`).
 
-## Dependências (requirements.txt)
+## Comandos úteis
 
-- `django`
-- `djangorestframework`
-- `psycopg2-binary`
-- `python-decouple`
-- `django-cors-headers`
+```bash
+# back (dentro de back/core)
+python manage.py makemigrations
+python manage.py migrate
+python manage.py check
 
-Se precisar atualizar o arquivo após instalar uma nova lib:
+# front (dentro de front)
+npx ng build      # build de produção, saída em dist/
+npx ng test       # testes
+```
+
+Se instalar uma nova lib no back, atualize o `requirements.txt`:
 
 ```bash
 pip freeze > requirements.txt
@@ -108,100 +185,6 @@ pip freeze > requirements.txt
 
 ## Observações
 
-- Nunca versionar: `.env`, `venv/`, `__pycache__/`, `*.pyc`, `db.sqlite3` (já devem estar no `.gitignore`).
-- O CORS já vem configurado via `django-cors-headers` para permitir requisições do frontend Angular.
-
-# Sistema de Cadastro PROCON - Frontend
-
-Frontend do sistema de cadastro, desenvolvido em Angular.
-
-## Stack
-
-- Angular (standalone, com SSR/SSG habilitado)
-- Tailwind CSS
-- TypeScript
-
-## Requisitos
-
-- Node.js (LTS) instalado
-- Angular CLI instalado globalmente (`npm install -g @angular/cli`)
-- Backend rodando (veja o README da pasta `back/` na raiz do repo)
-
-## Como iniciar o projeto (primeira vez)
-
-1. **Clonar o repositório** (se ainda não tiver feito)
-
-   ```bash
-   git clone https://github.com/pedroliraa/sistema_cadastro_procon_cg.git
-   cd sistema_cadastro_procon_cg
-   ```
-
-2. **Trocar para a branch develop**
-
-   ```bash
-   git checkout develop
-   ```
-
-   > Todo o trabalho novo deve ser feito em branches `feature/*` criadas a partir da `develop`, nunca direto na `main`.
-
-3. **Entrar na pasta do frontend**
-
-   ```bash
-   cd front
-   ```
-
-4. **Instalar as dependências**
-
-   ```bash
-   npm install --legacy-peer-deps
-   ```
-
-   > Use `--legacy-peer-deps` porque algumas versões do npm têm um bug conhecido na resolução de peer dependencies que trava a instalação sem essa flag.
-
-5. **Rodar o projeto**
-
-   ```bash
-   ng serve
-   ```
-
-   O frontend estará disponível em `http://localhost:4200/`.
-
-## Fluxo de trabalho (GitFlow)
-
-- `main` → código estável/em produção.
-- `develop` → branch de integração, onde as features se juntam.
-- `feature/nome-da-funcionalidade` → criada a partir da `develop` para cada nova funcionalidade.
-
-Para começar uma nova funcionalidade:
-
-```bash
-git checkout develop
-git pull
-git checkout -b feature/nome-da-funcionalidade
-```
-
-Ao terminar, abra um Pull Request de `feature/nome-da-funcionalidade` para `develop` (nunca direto para `main`).
-
-## Módulos previstos
-
-- `consulta-publica`
-- `admin`
-
-Para gerar um novo módulo:
-
-```bash
-ng generate module nome-do-modulo
-```
-
-## Build de produção
-
-```bash
-ng build
-```
-
-Os arquivos de build vão para a pasta `dist/`.
-
-## Observações
-
-- Nunca versionar: `node_modules/`, `.env`, `dist/`, `.angular/` (já devem estar no `.gitignore`).
-- O CORS já está habilitado no backend (via `django-cors-headers`) para aceitar requisições vindas do `http://localhost:4200`.
+- Nunca versionar: `.env`, `venv/`, `__pycache__/`, `node_modules/`, `.angular/`, `dist/` e a pasta `media/` (fotos enviadas).
+- O CORS está configurado no back para aceitar o front em `http://localhost:4200`.
+- As fotos das empresas são salvas em `media/empresas/` no back, então cada ambiente tem as suas.

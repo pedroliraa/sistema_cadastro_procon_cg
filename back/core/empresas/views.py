@@ -171,6 +171,7 @@ class EmpresaBuscaPublicaView(generics.ListAPIView):
     def get_queryset(self):
         nome = self.request.query_params.get('nome', '').strip()
         area = self.request.query_params.get('area', '').strip()
+        selo = self.request.query_params.get('selo', '').strip()
 
         empresas = self.queryset
 
@@ -184,4 +185,9 @@ class EmpresaBuscaPublicaView(generics.ListAPIView):
                 areas__nome__icontains=area
             )
 
+        if selo:
+            empresas = empresas.filter(
+                nivel_selo_atual__nome__iexact=selo
+            )
+            
         return empresas.distinct().order_by('razao_social')

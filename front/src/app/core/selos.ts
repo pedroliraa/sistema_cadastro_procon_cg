@@ -8,3 +8,5 @@ const IMAGEM_SELO: Record<string, string> = {
 export function imagemDoSelo(nome: string | null | undefined): string | null {
   return nome ? (IMAGEM_SELO[nome] ?? null) : null;
 }
+
+export const NOMES_SELOS = Object.keys(IMAGEM_SELO);

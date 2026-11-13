@@ -19,13 +19,16 @@
     @if (empresasDestaque().length > 0) {
     <div class="destaques-grid">
       @for (empresa of empresasDestaque(); track empresa.id) {
-      <article class="destaque-card">
-
+            <article class="destaque-card">
         <div class="destaque-imagem">
           @if (empresa.foto) {
           <img [src]="empresa.foto" [alt]="'Foto de ' + empresa.razao_social" />
           } @else {
           <span>🏢</span>
+          }
+
+          @if (imagemDoSelo(empresa.selo); as imagem) {
+          <img class="destaque-badge" [src]="imagem" [alt]="'Selo ' + empresa.selo" />
           }
         </div>
 
@@ -38,17 +41,10 @@
             }
           </div>
 
-          @if (empresa.selo) {
-          <span class="destaque-selo">
-            🏅 Selo {{ empresa.selo }}
-          </span>
-          } @else {
-          <span class="destaque-sem-selo">
-            Sem selo atribuído
-          </span>
-          }
+          <p class="destaque-selo" [class.destaque-selo--vazio]="!empresa.selo">
+            {{ empresa.selo ? 'Selo ' + empresa.selo : 'Sem selo' }}
+          </p>
         </div>
-
       </article>
       }
     </div>

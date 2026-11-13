@@ -24,21 +24,42 @@
       </div>
     </form>
 
-    <button type="button" class="filter-button" disabled title="Filtro por selo disponível em breve">
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M4 7h16"></path>
-        <circle cx="9" cy="7" r="2" fill="currentColor" stroke="none"></circle>
-        <path d="M4 17h16"></path>
-        <circle cx="15" cy="17" r="2" fill="currentColor" stroke="none"></circle>
-      </svg>
+    <div class="filter">
+      <button type="button" class="filter-button" (click)="alternarMenuSelo()" [attr.aria-expanded]="menuSeloAberto()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 7h16"></path>
+          <circle cx="9" cy="7" r="2" fill="currentColor" stroke="none"></circle>
+          <path d="M4 17h16"></path>
+          <circle cx="15" cy="17" r="2" fill="currentColor" stroke="none"></circle>
+        </svg>
+        <span>{{ seloSelecionado() ? 'Selo ' + seloSelecionado() : 'Filtrar por selo' }}</span>
+      </button>
 
-      <span>Filtrar por selo</span>
-    </button>
+      @if (menuSeloAberto()) {
+      <div class="pop pop--seals">
+        <p class="pop__title">Filtrar por selo</p>
+        <ul>
+          <li>
+            <button type="button" (click)="filtrarPorSelo('')">Todos os selos</button>
+          </li>
+          @for (selo of nomesSelos; track selo) {
+          <li>
+            <button type="button" (click)="filtrarPorSelo(selo)">
+              <img [src]="imagemDoSelo(selo)" [alt]="'Selo ' + selo" />
+              {{ selo }}
+            </button>
+          </li>
+          }
+        </ul>
+      </div>
+      }
+    </div>
   </div>
 
   <nav class="category-filters" aria-label="Categorias de empresas">
-    <button type="button" class="category-chip" [class.active]="areaSelecionada() === ''" (click)="limparFiltros()">
+    <button type="button" class="category-chip" [class.active]="areaSelecionada() === '' && !seloSelecionado()"
+      (click)="nome.value = ''; limparFiltros()">
       Todas
     </button>
 
@@ -77,12 +98,15 @@
   <div class="empresas-grid">
     @for (empresa of empresas(); track empresa.id) {
     <article class="empresa-card">
-
       <div class="empresa-imagem">
         @if (empresa.foto) {
         <img [src]="empresa.foto" [alt]="'Foto de ' + empresa.razao_social" />
         } @else {
         <span>🏢</span>
+        }
+
+        @if (imagemDoSelo(empresa.selo); as imagem) {
+        <img class="empresa-badge" [src]="imagem" [alt]="'Selo ' + empresa.selo" />
         }
       </div>
 
@@ -96,33 +120,19 @@
         </div>
 
         <p class="empresa-endereco">
-          📍 {{ empresa.endereco }}, {{ empresa.bairro }} —
-          {{ empresa.cidade }}
+          📍 {{ empresa.endereco }}, {{ empresa.bairro }} — {{ empresa.cidade }}
         </p>
 
-        @if (empresa.selo) {
-        <span class="empresa-selo">
-          @if (imagemDoSelo(empresa.selo); as imagem) {
-          <img [src]="imagem" [alt]="'Selo ' + empresa.selo" width="28" height="28" />
-          }
-          Selo {{ empresa.selo }}
-        </span>
-        } @else {
-        <span class="empresa-sem-selo">Sem selo atribuído</span>
-        }
+        <p class="empresa-selo" [class.empresa-selo--vazio]="!empresa.selo">
+          {{ empresa.selo ? 'Selo ' + empresa.selo : 'Sem selo' }}
+        </p>
       </div>
-
     </article>
     }
   </div>
   }
 
   @if (pesquisaRealizada() && !carregando() && !erro() && empresas().length === 0) {
-  <p>
-    @if (areaSelecionada()) {
-    Nenhuma empresa encontrada na categoria {{ areaSelecionada() }}.
-    } @else {
-    Nenhuma empresa encontrada para o nome pesquisado.
-    }
-  </p> }
+  <p>Nenhuma empresa encontrada com os filtros selecionados.</p>
+  }
 </main>

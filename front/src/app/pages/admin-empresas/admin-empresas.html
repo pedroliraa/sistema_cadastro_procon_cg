@@ -2,16 +2,14 @@
   <section class="admin__topo">
     <div>
       <h1 class="h-section">Empresas cadastradas</h1>
-      <a routerLink="/admin/empresas/nova" class="botao-cadastrar">
-        + Cadastrar empresa
-      </a>
       @if (auth.usuario(); as usuario) {
-      <p class="admin__usuario">
-        {{ usuario.username }} · {{ usuario.perfil }}
-      </p>
+      <p class="admin__usuario">{{ usuario.username }} · {{ usuario.perfil }}</p>
       }
     </div>
-    <button type="button" class="botao botao--secundario" (click)="auth.logout()">Sair</button>
+    <div class="admin__acoes">
+      <a routerLink="/admin/empresas/nova" class="botao">+ Cadastrar empresa</a>
+      <button type="button" class="botao botao--secundario" (click)="auth.logout()">Sair</button>
+    </div>
   </section>
 
   <div class="admin__filtros">
@@ -23,53 +21,52 @@
   </div>
 
   @if (erro()) {
-  <p class="admin__erro" role="alert">{{ erro() }}</p>
+  <p class="mensagem mensagem--erro" role="alert">{{ erro() }}</p>
   }
 
   @if (carregando()) {
-  <p>Carregando...</p>
+  <p class="admin__vazio">Carregando...</p>
   } @else if (empresas().length === 0 && !erro()) {
-  <p>Nenhuma empresa encontrada.</p>
+  <p class="admin__vazio">Nenhuma empresa encontrada.</p>
   } @else {
-  <table class="tabela">
-    <thead>
-      <tr>
-        <th>Razão social</th>
-        <th>CNPJ</th>
-        <th>Status</th>
-        <th>Selo</th>
-        <th>Próxima revalidação</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (empresa of empresas(); track empresa.id) {
-      <tr>
-        <td>{{ empresa.razao_social }}</td>
-        <td>{{ formatarCnpj(empresa.cnpj) }}</td>
-                <td>
-          <span [class]="'status status--' + empresa.status">{{ rotuloStatus[empresa.status] }}</span>
-        </td>
-        <td>
-          @if (imagemDoSelo(empresa.selo); as imagem) {
-          <span class="selo-mini">
-            <img [src]="imagem" [alt]="'Selo ' + empresa.selo" width="28" height="28" />
-            {{ empresa.selo }}
-          </span>
-          } @else {
-          <span class="sem-selo">—</span>
-          }
-        </td>
-        <td>
-          {{ formatarData(empresa.data_proxima_revalidacao) }}
-          @if (empresa.revalidacao_vencida) {
-          <span class="vencida">Vencida</span>
-          }
-        </td>
-        <td><a [routerLink]="['/admin/empresas', empresa.id]">Gerenciar</a></td>
-      </tr>
-      }
-    </tbody>
-  </table>
+  <div class="tabela-wrap">
+    <table class="tabela">
+      <thead>
+        <tr>
+          <th>Razão social</th>
+          <th>CNPJ</th>
+          <th>Status</th>
+          <th>Selo</th>
+          <th>Próxima revalidação</th>
+          <th><span class="sr-only">Ações</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (empresa of empresas(); track empresa.id) {
+        <tr>
+          <td><strong>{{ empresa.razao_social }}</strong></td>
+          <td>{{ formatarCnpj(empresa.cnpj) }}</td>
+          <td><span [class]="'status status--' + empresa.status">{{ rotuloStatus[empresa.status] }}</span></td>
+          <td>
+            @if (imagemDoSelo(empresa.selo); as imagem) {
+            <span class="selo-mini">
+              <img [src]="imagem" [alt]="'Selo ' + empresa.selo" width="28" height="28" />
+              {{ empresa.selo }}
+            </span>
+            } @else {
+            <span class="sem-selo">—</span>
+            }
+          </td>
+          <td>
+            {{ formatarData(empresa.data_proxima_revalidacao) }}
+            @if (empresa.revalidacao_vencida) { <span class="vencida">Vencida</span> }
+          </td>
+          <td><a class="link-gerenciar" [routerLink]="['/admin/empresas', empresa.id]">Gerenciar</a></td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 
   <div class="paginacao">
     <button type="button" class="botao botao--secundario" [disabled]="pagina() === 1"

@@ -7,7 +7,9 @@
   @if (empresa(); as empresa) {
   <section class="cabecalho">
     <div>
-      <a class="botao" [routerLink]="['/admin/empresas', empresa.id, 'editar']">
+      <h1 class="h-section">{{ empresa.razao_social }}</h1>
+      <p class="cnpj">CNPJ {{ formatarCnpj(empresa.cnpj) }}</p>
+      <a class="botao botao--secundario" [routerLink]="['/admin/empresas', empresa.id, 'editar']">
         ✏️ Editar empresa
       </a>
     </div>
@@ -24,21 +26,17 @@
   <div class="grade">
     <!-- Dados -->
     <section class="cartao">
-      <h2>Dados</h2>
-      <dl>
-        <dt>Endereço</dt>
-        <dd>{{ empresa.endereco }} — {{ empresa.bairro }}, {{ empresa.cidade }}</dd>
-        <dt>Telefone</dt>
-        <dd>{{ empresa.telefone }}</dd>
-        <dt>E-mail</dt>
-        <dd>{{ empresa.email }}</dd>
-        <dt>CNPJ</dt>
-        <dd>{{ formatarCnpj(empresa.cnpj) }}</dd>
-        <dt>Endereço</dt>
-        <dd>{{ empresa.endereco }} — {{ empresa.bairro }}, {{ empresa.cidade }}</dd>
-        <dt>Telefone</dt>
-        <dd>{{ formatarTelefone(empresa.telefone) }}</dd>
-      </dl>
+      <section class="cartao">
+        <h2>Dados</h2>
+        <dl>
+          <dt>Endereço</dt>
+          <dd>{{ empresa.endereco }} — {{ empresa.bairro }}, {{ empresa.cidade }}</dd>
+          <dt>Telefone</dt>
+          <dd>{{ formatarTelefone(empresa.telefone) }}</dd>
+          <dt>E-mail</dt>
+          <dd>{{ empresa.email }}</dd>
+        </dl>
+      </section>
     </section>
 
     <!-- PB-11: revalidação -->
@@ -92,34 +90,36 @@
       <p class="ajuda">Apenas o gestor pode reativar uma empresa removida.</p>
       }
     </section>
+    <!-- Selo -->
+    <section class="cartao">
+      <h2>Selo</h2>
+
+      <div class="selo-atual">
+        @if (imagemDoSelo(empresa.selo); as imagem) {
+        <img [src]="imagem" [alt]="'Selo ' + empresa.selo" width="72" height="72" />
+        }
+        <strong>{{ empresa.selo ? 'Selo ' + empresa.selo : 'Sem selo atribuído' }}</strong>
+      </div>
+
+      <form class="formulario" (submit)="$event.preventDefault(); alterarSelo(novoSelo.value, motivoSelo)">
+        <label for="novo-selo">Novo selo</label>
+        <select #novoSelo id="novo-selo">
+          <option value="">Selecione...</option>
+          @for (nivel of niveisSelo(); track nivel.id) {
+          <option [value]="nivel.id" [disabled]="nivel.nome === empresa.selo">{{ nivel.nome }}</option>
+          }
+        </select>
+
+        <label for="motivo-selo">Motivo (opcional)</label>
+        <textarea #motivoSelo id="motivo-selo" rows="3"
+          placeholder="Ex.: atendeu aos critérios da avaliação"></textarea>
+
+        <button type="submit" class="botao" [disabled]="salvando()">Salvar selo</button>
+      </form>
+    </section>
+
   </div>
 
-  <!-- Selo -->
-  <section class="cartao">
-    <h2>Selo</h2>
-
-    <div class="selo-atual">
-      @if (imagemDoSelo(empresa.selo); as imagem) {
-      <img [src]="imagem" [alt]="'Selo ' + empresa.selo" width="72" height="72" />
-      }
-      <strong>{{ empresa.selo ? 'Selo ' + empresa.selo : 'Sem selo atribuído' }}</strong>
-    </div>
-
-    <form class="formulario" (submit)="$event.preventDefault(); alterarSelo(novoSelo.value, motivoSelo)">
-      <label for="novo-selo">Novo selo</label>
-      <select #novoSelo id="novo-selo">
-        <option value="">Selecione...</option>
-        @for (nivel of niveisSelo(); track nivel.id) {
-        <option [value]="nivel.id" [disabled]="nivel.nome === empresa.selo">{{ nivel.nome }}</option>
-        }
-      </select>
-
-      <label for="motivo-selo">Motivo (opcional)</label>
-      <textarea #motivoSelo id="motivo-selo" rows="3" placeholder="Ex.: atendeu aos critérios da avaliação"></textarea>
-
-      <button type="submit" class="botao" [disabled]="salvando()">Salvar selo</button>
-    </form>
-  </section>
 
   <!-- PB-11: histórico -->
   <section class="cartao">

@@ -2,72 +2,105 @@
   max-width: 760px;
   margin: 48px auto;
   padding: 32px;
-  background: #ffffff;
-  border: 1px solid #dce3ef;
+  background: #fff;
+  border: 1px solid var(--border);
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(27, 45, 80, 0.06);
 }
 
 .empresa-formulario h1 {
-  margin: 0 0 32px;
-  color: #1b2d50;
+  margin: 0 0 28px;
+  color: var(--navy);
   font-size: 28px;
   font-weight: 700;
 }
 
-.empresa-formulario form {
+form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
+  gap: 20px 24px;
 }
 
-.empresa-formulario form > div {
+.campo {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  min-width: 0;
 }
 
-.empresa-formulario label {
-  color: #29324b;
+.campo--largo,
+.acoes {
+  grid-column: 1 / -1;
+}
+
+label {
+  color: var(--navy);
   font-size: 14px;
   font-weight: 600;
 }
 
-.empresa-formulario input {
+input:not([type='file']),
+select {
   width: 100%;
-  padding: 13px 16px;
+  padding: 12px 14px;
   border: 1px solid #cbd5e1;
   border-radius: 10px;
-  background: #ffffff;
-  color: #29324b;
+  background: #fff;
+  color: var(--navy);
   font: inherit;
-  box-sizing: border-box;
 }
 
-.empresa-formulario input:focus {
-  outline: 2px solid #385bb5;
+input[type='file'] {
+  padding: 10px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  background: var(--bg);
+  font: inherit;
+}
+
+select[multiple] {
+  min-height: 112px;
+}
+
+input:focus,
+select:focus {
+  outline: 2px solid var(--periwinkle);
   outline-offset: 1px;
 }
 
-.empresa-formulario button {
-  grid-column: 1 / -1;
-  padding: 14px 24px;
-  border: none;
-  border-radius: 10px;
-  background: #385bb5;
-  color: #ffffff;
-  font: inherit;
+.campo--erro input,
+.campo--erro select {
+  border-color: #dc2626;
+}
+
+.erro-campo {
+  color: var(--danger);
+  font-size: 12px;
   font-weight: 600;
-  cursor: pointer;
 }
 
-.empresa-formulario button:hover:not(:disabled) {
-  background: #294891;
+.ajuda {
+  color: var(--muted);
+  font-size: 12px;
 }
 
-.empresa-formulario button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.foto-preview {
+  width: 160px;
+  height: 160px;
+  margin-top: 8px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.acoes .botao {
+  width: 100%;
+  padding: 14px 24px;
+  border-radius: 12px;
+}
+
+.empresa-formulario .mensagem {
+  margin-top: 20px;
 }
 
 @media (max-width: 600px) {
@@ -76,46 +109,11 @@
     padding: 24px 16px;
   }
 
-  .empresa-formulario form {
+  form {
     grid-template-columns: 1fr;
   }
 
   .empresa-formulario h1 {
     font-size: 24px;
   }
-}
-.mensagem-sucesso {
-  margin-top: 16px;
-  padding: 12px 16px;
-  border-radius: 8px;
-  background-color: #e8f5e9;
-  color: #256029;
-  border: 1px solid #a5d6a7;
-}
-
-.mensagem-erro {
-  margin-top: 16px;
-  padding: 12px 16px;
-  border-radius: 8px;
-  background-color: #ffebee;
-  color: #b71c1c;
-  border: 1px solid #ef9a9a;
-}
-.foto-preview {
-  display: block;
-  width: 180px;
-  height: 180px;
-  margin-top: 12px;
-  border-radius: 12px;
-  object-fit: cover;
-  border: 1px solid #ddd;
-}
-
-select {
-  width: 100%;
-  padding: 14px 16px;
-  border: 1px solid #c9d6e2;
-  border-radius: 12px;
-  background: #fff;
-  font: inherit;
 }

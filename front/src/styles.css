@@ -14,6 +14,15 @@
       --font: "Montserrat", system-ui, sans-serif;
       --font-display: "Montserrat Alternates", "Montserrat", system-ui, sans-serif;
       --max: 1200px;
+      --border: #dce3ef;
+      --muted: #66758f;
+      --radius: 12px;
+      --ok: #166534;
+      --ok-bg: #dcfce7;
+      --warn: #92400e;
+      --warn-bg: #fef3c7;
+      --danger: #991b1b;
+      --danger-bg: #fee2e2;
   }
 
   *,
@@ -694,4 +703,100 @@
       html {
           scroll-behavior: auto;
       }
+  }
+  /* ---------- Componentes compartilhados ---------- */
+  .botao {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border: 1px solid var(--blue);
+      border-radius: 999px;
+      background: var(--blue);
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color .2s;
+  }
+
+  .botao:hover:not(:disabled) {
+      background: #0f4694;
+  }
+
+  .botao:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+  }
+
+  .botao--secundario {
+      background: transparent;
+      color: var(--blue);
+  }
+
+  .botao--secundario:hover:not(:disabled) {
+      background: #eaf0ff;
+  }
+
+  .mensagem {
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+  }
+
+  .mensagem--erro {
+      background: var(--danger-bg);
+      color: var(--danger);
+  }
+
+  .mensagem--sucesso {
+      background: var(--ok-bg);
+      color: var(--ok);
+  }
+
+  .status {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+  }
+
+  .status--ativo {
+      background: var(--ok-bg);
+      color: var(--ok);
+  }
+
+  .status--suspenso {
+      background: var(--warn-bg);
+      color: var(--warn);
+  }
+
+  .status--removido {
+      background: var(--danger-bg);
+      color: var(--danger);
+  }
+
+  .vencida {
+      margin-left: 6px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--danger-bg);
+      color: var(--danger);
+      font-size: 12px;
+      font-weight: 600;
+  }
+
+  .voltar {
+      display: inline-block;
+      margin-bottom: 16px;
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 600;
+  }
+
+  .voltar:hover {
+      text-decoration: underline;
   }

@@ -6,8 +6,11 @@ import {
   NivelSelo,
   mensagemDeErro,
 } from '../../core/empresa-admin.service';
+import {
+  formatarCnpj, formatarTelefone, limparCnpj, limparTelefone,
+} from '../../core/mascaras';
 import { finalize } from 'rxjs';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-admin-empresa-formulario',
@@ -19,6 +22,7 @@ export class AdminEmpresaFormulario implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly empresaService = inject(EmpresaAdminService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   readonly empresaId = Number(this.route.snapshot.paramMap.get('id')) || null;
   readonly fotoSelecionada = signal<File | null>(null);
   readonly fotoPreview = signal<string | null>(null);
@@ -61,21 +65,38 @@ export class AdminEmpresaFormulario implements OnInit {
     this.formulario.controls.areas.setValue(areasSelecionadas);
   }
 
+  invalido(campo: string): boolean {
+    const controle = this.formulario.get(campo);
+    return !!controle && controle.invalid && (controle.touched || controle.dirty);
+  }
+
+  mascararCnpj(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.formulario.controls.cnpj.setValue(formatarCnpj(input.value));
+  }
+
+  mascararTelefone(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.formulario.controls.telefone.setValue(formatarTelefone(input.value));
+  }
+
   salvarEmpresa(): void {
     if (this.formulario.invalid) {
       this.formulario.markAllAsTouched();
       return;
     }
 
+
+
     const valores = this.formulario.getRawValue();
     const dados = new FormData();
 
     dados.append('razao_social', valores.razao_social);
-    dados.append('cnpj', valores.cnpj);
+    dados.append('cnpj', limparCnpj(valores.cnpj));
     dados.append('endereco', valores.endereco);
     dados.append('bairro', valores.bairro);
     dados.append('cidade', valores.cidade);
-    dados.append('telefone', valores.telefone);
+    dados.append('telefone', limparTelefone(valores.telefone));
     dados.append('email', valores.email);
 
     valores.areas.forEach((areaId) => {
@@ -104,13 +125,11 @@ export class AdminEmpresaFormulario implements OnInit {
       .pipe(finalize(() => this.salvando.set(false)))
       .subscribe({
         next: (empresa) => {
-          const acao = this.empresaId !== null
-            ? 'atualizada'
-            : 'cadastrada';
+          const acao = this.empresaId !== null ? 'atualizada' : 'cadastrada';
 
-          this.mensagemSucesso.set(
-            `Empresa "${empresa.razao_social}" ${acao} com sucesso!`
-          );
+          this.router.navigate(['/admin/empresas', empresa.id], {
+            state: { sucesso: `Empresa "${empresa.razao_social}" ${acao} com sucesso!` },
+          });
         },
         error: (erro) => {
           console.error('Erro ao cadastrar empresa:', erro);
@@ -152,11 +171,11 @@ export class AdminEmpresaFormulario implements OnInit {
         next: (empresa) => {
           this.formulario.patchValue({
             razao_social: empresa.razao_social,
-            cnpj: empresa.cnpj,
+            cnpj: formatarCnpj(empresa.cnpj),
             endereco: empresa.endereco,
             bairro: empresa.bairro,
             cidade: empresa.cidade,
-            telefone: empresa.telefone,
+            telefone: formatarTelefone(empresa.telefone),
             email: empresa.email,
             areas: empresa.areas,
             nivel_selo: empresa.nivel_selo_atual,
@@ -177,11 +196,20 @@ export class AdminEmpresaFormulario implements OnInit {
 
   readonly formulario = this.fb.nonNullable.group({
     razao_social: ['', Validators.required],
-    cnpj: ['', Validators.required],
+    cnpj: [
+      '',
+      [
+        Validators.required,
+        Validators.pattern(/^[0-9A-Z]{2}\.[0-9A-Z]{3}\.[0-9A-Z]{3}\/[0-9A-Z]{4}-\d{2}$/),
+      ],
+    ],
     endereco: ['', Validators.required],
     bairro: ['', Validators.required],
     cidade: ['', Validators.required],
-    telefone: ['', Validators.required],
+    telefone: [
+      '',
+      [Validators.required, Validators.pattern(/^\(\d{2}\) \d{4,5}-\d{4}$/)],
+    ],
     email: ['', [Validators.required, Validators.email]],
     areas: this.fb.nonNullable.control<number[]>([], Validators.required),
     nivel_selo: this.fb.control<number | null>(null),

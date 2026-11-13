@@ -1,37 +1,37 @@
 .search-button {
-    display: grid;
-    place-items: center;
-    flex-shrink: 0;
-    padding: 8px;
-    border: none;
-    background: transparent;
-    color: var(--navy);
-    cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  color: var(--navy);
+  cursor: pointer;
 }
 
 .search-button:hover {
-    color: var(--blue);
+  color: var(--blue);
 }
 
 .search-button:disabled {
-    opacity: 0.5;
-    cursor: wait;
+  opacity: 0.5;
+  cursor: wait;
 }
 
 .consulta-publica .search {
-    width: 100%;
-    max-width: 635px;
-    margin-top: 16px;
+  width: 100%;
+  max-width: 635px;
+  margin-top: 16px;
 }
 
 .consulta-publica .field {
-    width: 100%;
+  width: 100%;
 }
 
 @media (max-width: 768px) {
-    .consulta-publica .search {
-        max-width: 100%;
-    }
+  .consulta-publica .search {
+    max-width: 100%;
+  }
 }
 
 .search-filters {
@@ -97,6 +97,7 @@
   border-color: #1557b7;
   color: white;
 }
+
 .filter-button {
   display: inline-flex;
   align-items: center;
@@ -111,6 +112,7 @@
 .page-head {
   margin-bottom: 32px;
 }
+
 /* Resultados da consulta pública */
 
 .resultados-titulo {
@@ -191,19 +193,50 @@
   margin-bottom: 16px;
 }
 
-.empresa-selo {
-  display: inline-block;
-  color: #8a6500;
-  font-weight: 700;
+.empresa-imagem span {
+  font-size: 3rem;
+  opacity: 0.3;
+  filter: grayscale(1);
 }
 
-.empresa-sem-selo {
-  color: #94a3b8;
-  font-size: 0.85rem;
+.empresa-imagem {
+  position: relative;
+  isolation: isolate;
+}
+
+.empresa-imagem img.empresa-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  width: auto;
+  height: 64px;
+  max-width: 80px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
 }
 
 .empresa-selo {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  margin: 0;
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.empresa-selo--vazio {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.filter {
+  position: relative;
+  flex: none;
+}
+
+.filter-button:not(:disabled) {
+  cursor: pointer;
+}
+
+.filter-button:not(:disabled):hover {
+  background: #eaf0ff;
 }

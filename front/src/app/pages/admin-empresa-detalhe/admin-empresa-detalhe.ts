@@ -2,7 +2,6 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
-
 import { AuthService } from '../../core/auth.service';
 import {
   Empresa,
@@ -15,6 +14,7 @@ import {
   formatarData,
   mensagemDeErro,
 } from '../../core/empresa-admin.service';
+import { formatarCnpj, formatarTelefone } from '../../core/mascaras';
 import { imagemDoSelo } from '../../core/selos';
 
 // Mesmas transições do back (empresas/services.py)
@@ -37,16 +37,18 @@ export class AdminEmpresaDetalhe implements OnInit {
 
   readonly empresa = signal<Empresa | null>(null);
   readonly historico = signal<HistoricoStatus[]>([]);
+  readonly historicoSelo = signal<HistoricoSelo[]>([]);
+  readonly niveisSelo = signal<NivelSelo[]>([]);
   readonly carregando = signal(true);
   readonly salvando = signal(false);
   readonly erro = signal('');
   readonly sucesso = signal('');
-  readonly niveisSelo = signal<NivelSelo[]>([]);
-  readonly historicoSelo = signal<HistoricoSelo[]>([]);
-  readonly imagemDoSelo = imagemDoSelo;
 
   readonly rotuloStatus = ROTULO_STATUS;
   readonly formatarData = formatarData;
+  readonly formatarCnpj = formatarCnpj;
+  readonly formatarTelefone = formatarTelefone;
+  readonly imagemDoSelo = imagemDoSelo;
 
   // Opções do select: só transições válidas e, para analista, sem "removido"
   readonly opcoesStatus = computed<StatusEmpresa[]>(() => {
@@ -61,10 +63,18 @@ export class AdminEmpresaDetalhe implements OnInit {
   private id = 0;
 
   ngOnInit(): void {
+    // Aviso vindo do formulário (cadastro/edição)
+    if (typeof history !== 'undefined' && history.state?.sucesso) {
+      this.mostrarSucesso(history.state.sucesso);
+      history.replaceState({}, ''); // evita repetir o aviso ao recarregar a página
+    }
+
     this.id = Number(this.route.snapshot.paramMap.get('id'));
+
     this.service.listarNiveisSelo().subscribe({
       next: (niveis) => this.niveisSelo.set(niveis),
     });
+
     this.carregar();
   }
 
@@ -81,6 +91,7 @@ export class AdminEmpresaDetalhe implements OnInit {
       },
     });
     this.carregarHistorico();
+    this.carregarHistoricoSelo();
   }
 
   carregarHistorico(): void {
@@ -89,10 +100,16 @@ export class AdminEmpresaDetalhe implements OnInit {
     });
   }
 
-    carregarHistoricoSelo(): void {
+  carregarHistoricoSelo(): void {
     this.service.historicoSelo(this.id).subscribe({
       next: (resposta) => this.historicoSelo.set(resposta.results),
     });
+  }
+
+  // Aviso verde que some sozinho depois de 5 segundos
+  private mostrarSucesso(mensagem: string): void {
+    this.sucesso.set(mensagem);
+    setTimeout(() => this.sucesso.set(''), 5000);
   }
 
   alterarSelo(nivelId: string, campoMotivo: HTMLTextAreaElement): void {
@@ -110,7 +127,7 @@ export class AdminEmpresaDetalhe implements OnInit {
       next: (empresa) => {
         this.empresa.set(empresa);
         this.salvando.set(false);
-        this.sucesso.set(`Selo alterado para "${empresa.selo}".`);
+        this.mostrarSucesso(`Selo alterado para "${empresa.selo}".`);
         campoMotivo.value = '';
         this.carregarHistoricoSelo();
       },
@@ -147,10 +164,9 @@ export class AdminEmpresaDetalhe implements OnInit {
       next: (empresa) => {
         this.empresa.set(empresa);
         this.salvando.set(false);
-        this.sucesso.set(`Status alterado para "${ROTULO_STATUS[empresa.status]}".`);
+        this.mostrarSucesso(`Status alterado para "${ROTULO_STATUS[empresa.status]}".`);
         campoMotivo.value = '';
         this.carregarHistorico();
-        this.carregarHistoricoSelo();
       },
       error: (erro) => {
         this.salvando.set(false);
@@ -168,7 +184,7 @@ export class AdminEmpresaDetalhe implements OnInit {
       next: (empresa) => {
         this.empresa.set(empresa);
         this.salvando.set(false);
-        this.sucesso.set(
+        this.mostrarSucesso(
           `Revalidação registrada. Próxima em ${formatarData(empresa.data_proxima_revalidacao)}.`
         );
         campoMotivo.value = '';

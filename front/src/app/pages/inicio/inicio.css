@@ -21,6 +21,7 @@
   background-position: center;
   background-repeat: no-repeat;
 }
+
 .hero-conteudo {
   position: relative;
   z-index: 1;
@@ -42,6 +43,7 @@
     padding: 40px 20px;
   }
 }
+
 .busca-inicial {
   padding: 48px 24px 64px;
   text-align: center;
@@ -194,12 +196,31 @@
   font-weight: 600;
 }
 
-.destaque-selo {
-  color: #8a6500;
-  font-weight: 700;
+.destaque-imagem {
+  position: relative;
+  isolation: isolate;
 }
 
-.destaque-sem-selo {
-  color: #94a3b8;
-  font-size: 0.85rem;
+.destaque-imagem img.destaque-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  width: auto;
+  height: 64px;
+  max-width: 80px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+}
+
+.destaque-selo {
+  margin: 0;
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.destaque-selo--vazio {
+  color: var(--muted);
+  font-weight: 500;
 }

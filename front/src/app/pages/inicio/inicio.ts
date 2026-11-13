@@ -2,6 +2,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { API_URL } from '../../core/api';
+import { imagemDoSelo } from '../../core/selos'
 
 interface EmpresaDestaque {
   id: number;
@@ -27,6 +28,7 @@ export class Inicio implements OnInit {
   private readonly http = inject(HttpClient);
 
   readonly empresasDestaque = signal<EmpresaDestaque[]>([]);
+  readonly imagemDoSelo = imagemDoSelo
 
   ngOnInit(): void {
     this.http

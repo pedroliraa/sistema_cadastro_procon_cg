@@ -8,6 +8,7 @@ import {
   ROTULO_STATUS,
   formatarData,
 } from '../../core/empresa-admin.service';
+import { formatarCnpj } from '../../core/mascaras';
 import { imagemDoSelo } from '../../core/selos';
 
 @Component({
@@ -26,6 +27,7 @@ export class AdminEmpresas implements OnInit {
   readonly temProxima = signal(false);
   readonly somenteVencidas = signal(false);
   readonly carregando = signal(false);
+  readonly formatarCnpj = formatarCnpj;
   readonly erro = signal('');
   readonly imagemDoSelo = imagemDoSelo;
 

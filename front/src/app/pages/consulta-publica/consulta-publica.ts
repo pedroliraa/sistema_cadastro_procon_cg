@@ -1,8 +1,9 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-import { imagemDoSelo } from '../../core/selos';
 
+import { API_URL } from '../../core/api';
+import { NOMES_SELOS, imagemDoSelo } from '../../core/selos';
 
 interface EmpresaPublica {
   id: number;
@@ -11,10 +12,7 @@ interface EmpresaPublica {
   endereco: string;
   bairro: string;
   cidade: string;
-  areas: {
-    id: number;
-    nome: string;
-  }[];
+  areas: { id: number; nome: string }[];
   selo: string | null;
 }
 
@@ -32,75 +30,77 @@ interface RespostaEmpresas {
 export class ConsultaPublica implements OnInit {
   private readonly http = inject(HttpClient);
   readonly route = inject(ActivatedRoute);
-  ngOnInit(): void {
-    const nome = this.route.snapshot.queryParamMap.get('nome');
-
-    if (nome) {
-      this.buscar(nome);
-    }
-  }
 
   readonly empresas = signal<EmpresaPublica[]>([]);
   readonly carregando = signal(false);
   readonly erro = signal('');
   readonly pesquisaRealizada = signal(false);
-  readonly imagemDoSelo = imagemDoSelo;
   readonly areaSelecionada = signal('');
+  readonly seloSelecionado = signal('');
+  readonly menuSeloAberto = signal(false);
+
+  readonly nomesSelos = NOMES_SELOS;
+  readonly imagemDoSelo = imagemDoSelo;
+
+  private nomeAtual = '';
+
+  ngOnInit(): void {
+    const params = this.route.snapshot.queryParamMap;
+    this.nomeAtual = (params.get('nome') ?? '').trim();
+    this.seloSelecionado.set(params.get('selo') ?? '');
+    this.consultar();
+  }
+
+  private consultar(): void {
+    const params: Record<string, string> = {};
+    if (this.nomeAtual) params['nome'] = this.nomeAtual;
+    if (this.areaSelecionada()) params['area'] = this.areaSelecionada();
+    if (this.seloSelecionado()) params['selo'] = this.seloSelecionado();
+
+    this.carregando.set(true);
+    this.erro.set('');
+
+    this.http
+      .get<RespostaEmpresas>(`${API_URL}/publico/empresas/`, { params })
+      .subscribe({
+        next: (resposta) => {
+          this.empresas.set(resposta.results);
+          this.pesquisaRealizada.set(true);
+          this.carregando.set(false);
+        },
+        error: () => {
+          this.erro.set('Não foi possível realizar a consulta.');
+          this.carregando.set(false);
+        },
+      });
+  }
 
   buscar(nome: string): void {
-    this.areaSelecionada.set('');
-    const termo = nome.trim();
-
-    if (!termo) {
-      this.empresas.set([]);
-      this.erro.set('');
-      this.pesquisaRealizada.set(false);
-      return;
-    }
-
-    this.carregando.set(true);
-    this.erro.set('');
-
-    this.http.get<RespostaEmpresas>(
-      'http://127.0.0.1:8000/api/publico/empresas/',
-      { params: { nome: termo } }
-    ).subscribe({
-      next: (resposta) => {
-        this.empresas.set(resposta.results);
-        this.pesquisaRealizada.set(true);
-        this.carregando.set(false);
-      },
-      error: () => {
-        this.erro.set('Não foi possível realizar a consulta.');
-        this.carregando.set(false);
-      },
-    });
+    this.nomeAtual = nome.trim();
+    this.consultar();
   }
+
   buscarPorArea(area: string): void {
     this.areaSelecionada.set(area);
-    this.carregando.set(true);
-    this.erro.set('');
-
-    this.http.get<RespostaEmpresas>(
-      'http://127.0.0.1:8000/api/publico/empresas/',
-      { params: { area } }
-    ).subscribe({
-      next: (resposta) => {
-        this.empresas.set(resposta.results);
-        this.pesquisaRealizada.set(true);
-        this.carregando.set(false);
-      },
-      error: () => {
-        this.erro.set('Não foi possível realizar a consulta.');
-        this.carregando.set(false);
-      },
-    });
+    this.consultar();
   }
+
+  alternarMenuSelo(): void {
+    this.menuSeloAberto.update((aberto) => !aberto);
+  }
+
+  filtrarPorSelo(selo: string): void {
+    this.seloSelecionado.set(selo);
+    this.menuSeloAberto.set(false);
+    this.consultar();
+  }
+
+  // "Todas": remove todos os filtros e lista tudo
   limparFiltros(): void {
+    this.nomeAtual = '';
     this.areaSelecionada.set('');
-    this.empresas.set([]);
-    this.erro.set('');
-    this.pesquisaRealizada.set(false);
-    this.carregando.set(false);
+    this.seloSelecionado.set('');
+    this.menuSeloAberto.set(false);
+    this.consultar();
   }
 }

@@ -1,104 +1,101 @@
 <main class="empresa-formulario">
-    <a [routerLink]="empresaId !== null
-    ? ['/admin/empresas', empresaId]
-    : ['/admin/empresas']" class="voltar">
-        ← Voltar
-    </a>
-    <h1>{{ empresaId !== null ? 'Editar empresa' : 'Cadastrar empresa' }}</h1>
+  <a class="voltar" [routerLink]="empresaId !== null ? ['/admin/empresas', empresaId] : ['/admin/empresas']">
+    ← Voltar
+  </a>
+  <h1>{{ empresaId !== null ? 'Editar empresa' : 'Cadastrar empresa' }}</h1>
 
-    <form [formGroup]="formulario" (ngSubmit)="salvarEmpresa()">
-        <div>
-            <label for="razao_social">Razão social</label>
-            <input id="razao_social" type="text" formControlName="razao_social" required />
-        </div>
+  <form [formGroup]="formulario" (ngSubmit)="salvarEmpresa()" novalidate>
+    <div class="campo campo--largo" [class.campo--erro]="invalido('razao_social')">
+      <label for="razao_social">Razão social</label>
+      <input id="razao_social" type="text" formControlName="razao_social" />
+      @if (invalido('razao_social')) { <small class="erro-campo">Informe a razão social.</small> }
+    </div>
 
-        <div>
-            <label for="cnpj">CNPJ</label>
-            <input id="cnpj" type="text" formControlName="cnpj" maxlength="14" placeholder="Somente números" required />
-        </div>
+    <div class="campo" [class.campo--erro]="invalido('cnpj')">
+      <label for="cnpj">CNPJ</label>
+      <input id="cnpj" formControlName="cnpj" (input)="mascararCnpj($event)"
+        placeholder="00.000.000/0000-00" maxlength="18" autocomplete="off" />
+      @if (invalido('cnpj')) { <small class="erro-campo">CNPJ incompleto.</small> }
+    </div>
 
-        <div>
-            <label for="endereco">Endereço</label>
-            <input id="endereco" type="text" formControlName="endereco" required />
-        </div>
+    <div class="campo" [class.campo--erro]="invalido('telefone')">
+      <label for="telefone">Telefone</label>
+      <input id="telefone" formControlName="telefone" (input)="mascararTelefone($event)"
+        placeholder="(00) 00000-0000" maxlength="15" inputmode="tel" />
+      @if (invalido('telefone')) { <small class="erro-campo">Telefone incompleto.</small> }
+    </div>
 
-        <div>
-            <label for="bairro">Bairro</label>
-            <input id="bairro" type="text" formControlName="bairro" required />
-        </div>
+    <div class="campo campo--largo" [class.campo--erro]="invalido('endereco')">
+      <label for="endereco">Endereço</label>
+      <input id="endereco" type="text" formControlName="endereco" />
+      @if (invalido('endereco')) { <small class="erro-campo">Informe o endereço.</small> }
+    </div>
 
-        <div>
-            <label for="cidade">Cidade</label>
-            <input id="cidade" type="text" formControlName="cidade" required />
-        </div>
+    <div class="campo" [class.campo--erro]="invalido('bairro')">
+      <label for="bairro">Bairro</label>
+      <input id="bairro" type="text" formControlName="bairro" />
+      @if (invalido('bairro')) { <small class="erro-campo">Informe o bairro.</small> }
+    </div>
 
-        <div>
-            <label for="telefone">Telefone</label>
-            <input id="telefone" type="tel" formControlName="telefone" maxlength="11" placeholder="DDD + número"
-                required />
-        </div>
+    <div class="campo" [class.campo--erro]="invalido('cidade')">
+      <label for="cidade">Cidade</label>
+      <input id="cidade" type="text" formControlName="cidade" />
+      @if (invalido('cidade')) { <small class="erro-campo">Informe a cidade.</small> }
+    </div>
 
-        <div>
-            <label for="email">E-mail</label>
-            <input id="email" type="email" formControlName="email" required />
-        </div>
-        <div class="campo-areas">
-            <label for="areas">Áreas de atuação</label>
-            <select id="areas" multiple (change)="selecionarAreas($event)">
-                @for (area of areasDisponiveis(); track area.id) {
-                <option [value]="area.id" [selected]="formulario.controls.areas.value.includes(area.id)">
-                    {{ area.nome }}
-                </option>
-                }
-            </select>
+    <div class="campo campo--largo" [class.campo--erro]="invalido('email')">
+      <label for="email">E-mail</label>
+      <input id="email" type="email" formControlName="email" />
+      @if (invalido('email')) { <small class="erro-campo">Informe um e-mail válido.</small> }
+    </div>
 
-            <small>
-                Segure Ctrl para selecionar mais de uma categoria.
-            </small>
-        </div>
+    <div class="campo" [class.campo--erro]="invalido('areas')">
+      <label for="areas">Áreas de atuação</label>
+      <select id="areas" multiple (change)="selecionarAreas($event)"
+        (blur)="formulario.controls.areas.markAsTouched()">
+        @for (area of areasDisponiveis(); track area.id) {
+        <option [value]="area.id" [selected]="formulario.controls.areas.value.includes(area.id)">
+          {{ area.nome }}
+        </option>
+        }
+      </select>
+      @if (invalido('areas')) {
+      <small class="erro-campo">Selecione ao menos uma área.</small>
+      } @else {
+      <small class="ajuda">Segure Ctrl para selecionar mais de uma.</small>
+      }
+    </div>
 
-        <div class="campo">
-            <label for="nivel_selo">Selo (opcional)</label>
-            <select id="nivel_selo" formControlName="nivel_selo">
-                <option [ngValue]="null">Sem selo</option>
-                @for (nivel of niveisSelo(); track nivel.id) {
-                <option [ngValue]="nivel.id">{{ nivel.nome }}</option>
-                }
-            </select>
-        </div>
+    <div class="campo">
+      <label for="nivel_selo">Selo (opcional)</label>
+      <select id="nivel_selo" formControlName="nivel_selo">
+        <option [ngValue]="null">Sem selo</option>
+        @for (nivel of niveisSelo(); track nivel.id) {
+        <option [ngValue]="nivel.id">{{ nivel.nome }}</option>
+        }
+      </select>
+    </div>
 
-        <div class="campo-foto">
-            <label for="foto">Foto ou logotipo da empresa</label>
+    <div class="campo campo--largo">
+      <label for="foto">Foto ou logotipo da empresa</label>
+      <input id="foto" type="file" accept="image/png,image/jpeg,image/webp" (change)="selecionarFoto($event)" />
+      @if (fotoPreview()) {
+      <img class="foto-preview" [src]="fotoPreview()" alt="Pré-visualização da foto da empresa" />
+      }
+      <small class="ajuda">Formatos permitidos: PNG, JPG ou WebP.</small>
+    </div>
 
-            <input id="foto" type="file" accept="image/png,image/jpeg,image/webp" (change)="selecionarFoto($event)" />
+    <div class="acoes campo--largo">
+      <button type="submit" class="botao" [disabled]="salvando()">
+        {{ salvando() ? 'Salvando...' : empresaId !== null ? 'Salvar alterações' : 'Cadastrar empresa' }}
+      </button>
+    </div>
+  </form>
 
-            @if (fotoPreview()) {
-            <img class="foto-preview" [src]="fotoPreview()" alt="Pré-visualização da foto da empresa" />
-            }
-
-            <small>
-                Formatos permitidos: PNG, JPG ou WebP.
-            </small>
-        </div>
-        <button type="submit" [disabled]="formulario.invalid || salvando()">
-            {{
-            salvando()
-            ? 'Salvando...'
-            : empresaId !== null
-            ? 'Salvar alterações'
-            : 'Cadastrar empresa'
-            }}
-        </button>
-    </form>
-
-    @if (mensagemSucesso()) {
-    <p class="mensagem-sucesso" role="status">
-        {{ mensagemSucesso() }}
-    </p>
-    }
-    @if (mensagemErro()) {
-    <p class="mensagem-erro" role="alert">
-        {{ mensagemErro() }}
-    </p>
-    }
+  @if (mensagemSucesso()) {
+  <p class="mensagem mensagem--sucesso" role="status">{{ mensagemSucesso() }}</p>
+  }
+  @if (mensagemErro()) {
+  <p class="mensagem mensagem--erro" role="alert">{{ mensagemErro() }}</p>
+  }
 </main>
